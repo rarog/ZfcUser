@@ -1,5 +1,9 @@
-<phpunit bootstrap="./bootstrap.php"
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="phpunit.xsd"
+         bootstrap="./tests/bootstrap.php"
          colors="true"
+         convertDeprecationsToExceptions="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
@@ -7,10 +11,9 @@
          stopOnFailure="false"
          processIsolation="false"
          backupGlobals="false"
-         syntaxCheck="true"
 >
     <testsuite name="ZfcUser Test Suite">
-        <directory>./ZfcUserTest</directory>
+        <directory>./tests/ZfcUserTest</directory>
     </testsuite>
     
     <php>
@@ -27,12 +30,12 @@
 
     <filter>
         <whitelist>
-            <directory suffix=".php">../src</directory>
+            <directory suffix=".php">./src</directory>
         </whitelist>
     </filter>
     
     <logging>
         <log type="coverage-text" target="php://stdout"/>
-        <log type="coverage-clover" target="../build/logs/clover.xml"/>
+        <log type="coverage-clover" target="build/logs/clover.xml"/>
     </logging>
 </phpunit>

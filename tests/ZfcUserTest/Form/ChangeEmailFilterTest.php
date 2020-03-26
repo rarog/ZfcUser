@@ -2,18 +2,23 @@
 
 namespace ZfcUserTest\Form;
 
+use Laminas\Validator\EmailAddress;
+use PHPUnit\Framework\TestCase;
 use ZfcUser\Form\ChangeEmailFilter as Filter;
+use ZfcUser\Options\ModuleOptions;
+use ZfcUser\Validator\NoRecordExists;
 
-class ChangeEmailFilterTest extends \PHPUnit_Framework_TestCase
+class ChangeEmailFilterTest extends TestCase
 {
-    public function testConstruct()
+    public function testConstruct(): void
     {
-        $options = $this->getMock('ZfcUser\Options\ModuleOptions');
+        $options = $this->getMockBuilder(ModuleOptions::class)
+            ->getMock();
         $options->expects($this->once())
-                ->method('getAuthIdentityFields')
-                ->will($this->returnValue(array('email')));
+            ->method('getAuthIdentityFields')
+            ->will($this->returnValue(['email']));
 
-        $validator = $this->getMockBuilder('ZfcUser\Validator\NoRecordExists')->disableOriginalConstructor()->getMock();
+        $validator = $this->getMockBuilder(NoRecordExists::class)->disableOriginalConstructor()->getMock();
         $filter = new Filter($options, $validator);
 
         $inputs = $filter->getInputs();
@@ -23,20 +28,21 @@ class ChangeEmailFilterTest extends \PHPUnit_Framework_TestCase
 
         $validators = $inputs['identity']->getValidatorChain()->getValidators();
         $this->assertArrayHasKey('instance', $validators[0]);
-        $this->assertInstanceOf('\Laminas\Validator\EmailAddress', $validators[0]['instance']);
+        $this->assertInstanceOf(EmailAddress::class, $validators[0]['instance']);
     }
 
     /**
      * @dataProvider providerTestConstructIdentityEmail
      */
-    public function testConstructIdentityEmail($onlyEmail)
+    public function testConstructIdentityEmail($onlyEmail): void
     {
-        $options = $this->getMock('ZfcUser\Options\ModuleOptions');
+        $options = $this->getMockBuilder(ModuleOptions::class)
+            ->getMock();
         $options->expects($this->once())
-                ->method('getAuthIdentityFields')
-                ->will($this->returnValue(($onlyEmail) ? array('email') : array('username')));
+            ->method('getAuthIdentityFields')
+            ->will($this->returnValue(($onlyEmail) ? ['email'] : ['username']));
 
-        $validator = $this->getMockBuilder('ZfcUser\Validator\NoRecordExists')->disableOriginalConstructor()->getMock();
+        $validator = $this->getMockBuilder(NoRecordExists::class)->disableOriginalConstructor()->getMock();
         $filter = new Filter($options, $validator);
 
         $inputs = $filter->getInputs();
@@ -52,19 +58,20 @@ class ChangeEmailFilterTest extends \PHPUnit_Framework_TestCase
             // test email as identity
             $validators = $identity->getValidatorChain()->getValidators();
             $this->assertArrayHasKey('instance', $validators[0]);
-            $this->assertInstanceOf('\Laminas\Validator\EmailAddress', $validators[0]['instance']);
+            $this->assertInstanceOf(EmailAddress::class, $validators[0]['instance']);
         }
     }
 
-    public function testSetGetEmailValidator()
+    public function testSetGetEmailValidator(): void
     {
-        $options = $this->getMock('ZfcUser\Options\ModuleOptions');
+        $options = $this->getMockBuilder(ModuleOptions::class)
+            ->getMock();
         $options->expects($this->once())
-                ->method('getAuthIdentityFields')
-                ->will($this->returnValue(array()));
+            ->method('getAuthIdentityFields')
+            ->will($this->returnValue([]));
 
-        $validatorInit = $this->getMockBuilder('ZfcUser\Validator\NoRecordExists')->disableOriginalConstructor()->getMock();
-        $validatorNew = $this->getMockBuilder('ZfcUser\Validator\NoRecordExists')->disableOriginalConstructor()->getMock();
+        $validatorInit = $this->getMockBuilder(NoRecordExists::class)->disableOriginalConstructor()->getMock();
+        $validatorNew = $this->getMockBuilder(NoRecordExists::class)->disableOriginalConstructor()->getMock();
 
         $filter = new Filter($options, $validatorInit);
 
@@ -73,11 +80,11 @@ class ChangeEmailFilterTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($validatorNew, $filter->getEmailValidator());
     }
 
-    public function providerTestConstructIdentityEmail()
+    public function providerTestConstructIdentityEmail(): array
     {
-        return array(
-            array(true),
-            array(false)
-        );
+        return [
+            [true],
+            [false]
+        ];
     }
 }

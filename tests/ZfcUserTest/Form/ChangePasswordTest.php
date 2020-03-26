@@ -2,16 +2,19 @@
 
 namespace ZfcUserTest\Form;
 
+use PHPUnit\Framework\TestCase;
 use ZfcUser\Form\ChangePassword as Form;
+use ZfcUser\Options\AuthenticationOptionsInterface;
 
-class ChangePasswordTest extends \PHPUnit_Framework_TestCase
+class ChangePasswordTest extends TestCase
 {
     /**
      * @covers ZfcUser\Form\ChangePassword::__construct
      */
-    public function testConstruct()
+    public function testConstruct(): void
     {
-        $options = $this->getMock('ZfcUser\Options\AuthenticationOptionsInterface');
+        $options = $this->getMockBuilder(AuthenticationOptionsInterface::class)
+            ->getMock();
 
         $form = new Form(null, $options);
 
@@ -27,9 +30,10 @@ class ChangePasswordTest extends \PHPUnit_Framework_TestCase
      * @covers ZfcUser\Form\ChangePassword::getAuthenticationOptions
      * @covers ZfcUser\Form\ChangePassword::setAuthenticationOptions
      */
-    public function testSetGetAuthenticationOptions()
+    public function testSetGetAuthenticationOptions(): void
     {
-        $options = $this->getMock('ZfcUser\Options\AuthenticationOptionsInterface');
+        $options = $this->getMockBuilder(AuthenticationOptionsInterface::class)
+            ->getMock();
         $form = new Form(null, $options);
 
         $this->assertSame($options, $form->getAuthenticationOptions());

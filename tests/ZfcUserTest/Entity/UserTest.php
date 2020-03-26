@@ -2,16 +2,29 @@
 
 namespace ZfcUserTest\Entity;
 
+use PHPUnit\Framework\TestCase;
 use ZfcUser\Entity\User as Entity;
 
-class UserTest extends \PHPUnit_Framework_TestCase
+class UserTest extends TestCase
 {
     protected $user;
 
-    public function setUp()
+    /**
+     * {@inheritDoc}
+     * @see \PHPUnit\Framework\TestCase::setUp()
+     */
+    protected function setUp(): void
     {
-        $user = new Entity;
-        $this->user = $user;
+        $this->user = new Entity();
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \PHPUnit\Framework\TestCase::tearDown()
+     */
+    protected function tearDown(): void
+    {
+        unset($this->user);
     }
 
     /**

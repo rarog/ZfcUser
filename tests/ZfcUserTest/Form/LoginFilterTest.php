@@ -2,19 +2,23 @@
 
 namespace ZfcUserTest\Form;
 
+use Laminas\Validator\EmailAddress;
+use PHPUnit\Framework\TestCase;
 use ZfcUser\Form\LoginFilter as Filter;
+use ZfcUser\Options\ModuleOptions;
 
-class LoginFilterTest extends \PHPUnit_Framework_TestCase
+class LoginFilterTest extends TestCase
 {
     /**
      * @covers ZfcUser\Form\LoginFilter::__construct
      */
-    public function testConstruct()
+    public function testConstruct(): void
     {
-        $options = $this->getMock('ZfcUser\Options\ModuleOptions');
+        $options = $this->getMockBuilder(ModuleOptions::class)
+            ->getMock();
         $options->expects($this->once())
                 ->method('getAuthIdentityFields')
-                ->will($this->returnValue(array()));
+                ->will($this->returnValue([]));
 
         $filter = new Filter($options);
 
@@ -28,12 +32,13 @@ class LoginFilterTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers ZfcUser\Form\LoginFilter::__construct
      */
-    public function testConstructIdentityEmail()
+    public function testConstructIdentityEmail(): void
     {
-        $options = $this->getMock('ZfcUser\Options\ModuleOptions');
+        $options = $this->getMockBuilder(ModuleOptions::class)
+            ->getMock();
         $options->expects($this->once())
                 ->method('getAuthIdentityFields')
-                ->will($this->returnValue(array('email')));
+                ->will($this->returnValue(['email']));
 
         $filter = new Filter($options);
 
@@ -46,6 +51,6 @@ class LoginFilterTest extends \PHPUnit_Framework_TestCase
         // test email as identity
         $validators = $identity->getValidatorChain()->getValidators();
         $this->assertArrayHasKey('instance', $validators[0]);
-        $this->assertInstanceOf('\Laminas\Validator\EmailAddress', $validators[0]['instance']);
+        $this->assertInstanceOf(EmailAddress::class, $validators[0]['instance']);
     }
 }

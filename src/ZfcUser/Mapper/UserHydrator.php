@@ -2,10 +2,10 @@
 
 namespace ZfcUser\Mapper;
 
-use Laminas\Hydrator\ClassMethods;
+use Laminas\Hydrator\ClassMethodsHydrator;
 use ZfcUser\Entity\UserInterface as UserEntityInterface;
 
-class UserHydrator extends ClassMethods
+class UserHydrator extends ClassMethodsHydrator
 {
     /**
      * Extract values from an object
@@ -14,7 +14,7 @@ class UserHydrator extends ClassMethods
      * @return array
      * @throws Exception\InvalidArgumentException
      */
-    public function extract($object)
+    public function extract(object $object): array
     {
         if (!$object instanceof UserEntityInterface) {
             throw new Exception\InvalidArgumentException('$object must be an instance of ZfcUser\Entity\UserInterface');

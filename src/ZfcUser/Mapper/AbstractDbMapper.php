@@ -7,11 +7,12 @@ use Laminas\Db\ResultSet\HydratingResultSet;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\TableIdentifier;
-use Laminas\Hydrator\HydratorInterface;
 use Laminas\Hydrator\ClassMethods;
+use Laminas\Hydrator\ClassMethodsHydrator;
+use Laminas\Hydrator\HydratorInterface;
+use ZfcUser\Db\Adapter\MasterSlaveAdapterInterface;
 use ZfcUser\Entity\UserInterface as UserEntityInterface;
 use ZfcUser\EventManager\EventProvider;
-use ZfcUser\Db\Adapter\MasterSlaveAdapterInterface;
 
 abstract class AbstractDbMapper extends EventProvider
 {
@@ -79,7 +80,7 @@ abstract class AbstractDbMapper extends EventProvider
             throw new \Exception('No db adapter present');
         }
         if (!$this->hydrator instanceof HydratorInterface) {
-            $this->hydrator = new ClassMethods;
+            $this->hydrator = new ClassMethodsHydrator();
         }
         if (!is_object($this->entityPrototype)) {
             throw new \Exception('No entity prototype set');

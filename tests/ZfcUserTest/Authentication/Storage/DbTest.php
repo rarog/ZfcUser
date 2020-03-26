@@ -2,9 +2,17 @@
 
 namespace ZfcUserTest\Authentication\Storage;
 
+use Laminas\Authentication\Storage\Session;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\ServiceManager;
+use PHPUnit\Framework\TestCase;
 use ZfcUser\Authentication\Storage\Db;
+use ZfcUser\Entity\User;
+use ZfcUser\Mapper\User as UserMapper;
+use ZfcUser\Mapper\UserInterface;
+use ReflectionClass;
 
-class DbTest extends \PHPUnit_Framework_TestCase
+class DbTest extends TestCase
 {
     /**
      * The object to be tested.
@@ -16,34 +24,48 @@ class DbTest extends \PHPUnit_Framework_TestCase
     /**
      * Mock of Storage.
      *
-     * @var storage
+     * @var Session
      */
     protected $storage;
 
     /**
-     * Mock of Mapper.
-     *
-     * @var mapper
+     * @var UserMapper
      */
     protected $mapper;
 
-    public function setUp()
+    /**
+     * {@inheritDoc}
+     * @see \PHPUnit\Framework\TestCase::setUp()
+     */
+    protected function setUp(): void
     {
-        $db = new Db;
-        $this->db = $db;
+        $this->db = new Db();
 
-        $this->storage = $this->getMock('Laminas\Authentication\Storage\Session');
-        $this->mapper = $this->getMock('ZfcUser\Mapper\User');
+        $this->storage = $this->getMockBuilder(Session::class)
+            ->getMock();
+        $this->mapper = $this->getMockBuilder(UserMapper::class)
+            ->getMock();
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \PHPUnit\Framework\TestCase::tearDown()
+     */
+    protected function tearDown(): void
+    {
+        unset($this->db);
+        unset($this->storage);
+        unset($this->mapper);
     }
 
     /**
      * @covers ZfcUser\Authentication\Storage\Db::isEmpty
      */
-    public function testIsEmpty()
+    public function testIsEmpty(): void
     {
         $this->storage->expects($this->once())
-                      ->method('isEmpty')
-                      ->will($this->returnValue(true));
+            ->method('isEmpty')
+            ->will($this->returnValue(true));
 
         $this->db->setStorage($this->storage);
 
@@ -53,9 +75,9 @@ class DbTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers ZfcUser\Authentication\Storage\Db::read
      */
-    public function testReadWithResolvedEntitySet()
+    public function testReadWithResolvedEntitySet(): void
     {
-        $reflectionClass = new \ReflectionClass('ZfcUser\Authentication\Storage\Db');
+        $reflectionClass = new ReflectionClass(Db::class);
         $reflectionProperty = $reflectionClass->getProperty('resolvedIdentity');
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($this->db, 'zfcUser');
@@ -66,21 +88,22 @@ class DbTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers ZfcUser\Authentication\Storage\Db::read
      */
-    public function testReadWithoutResolvedEntitySetIdentityIntUserFound()
+    public function testReadWithoutResolvedEntitySetIdentityIntUserFound(): void
     {
         $this->storage->expects($this->once())
-                      ->method('read')
-                      ->will($this->returnValue(1));
+            ->method('read')
+            ->will($this->returnValue(1));
 
         $this->db->setStorage($this->storage);
 
-        $user = $this->getMock('ZfcUser\Entity\User');
+        $user = $this->getMockBuilder(User::class)
+            ->getMock();
         $user->setUsername('zfcUser');
 
         $this->mapper->expects($this->once())
-                     ->method('findById')
-                     ->with(1)
-                     ->will($this->returnValue($user));
+            ->method('findById')
+            ->with(1)
+            ->will($this->returnValue($user));
 
         $this->db->setMapper($this->mapper);
 
@@ -92,18 +115,18 @@ class DbTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers ZfcUser\Authentication\Storage\Db::read
      */
-    public function testReadWithoutResolvedEntitySetIdentityIntUserNotFound()
+    public function testReadWithoutResolvedEntitySetIdentityIntUserNotFound(): void
     {
         $this->storage->expects($this->once())
-                      ->method('read')
-                      ->will($this->returnValue(1));
+            ->method('read')
+            ->will($this->returnValue(1));
 
         $this->db->setStorage($this->storage);
 
         $this->mapper->expects($this->once())
-                     ->method('findById')
-                     ->with(1)
-                     ->will($this->returnValue(false));
+            ->method('findById')
+            ->with(1)
+            ->will($this->returnValue(false));
 
         $this->db->setMapper($this->mapper);
 
@@ -115,14 +138,15 @@ class DbTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers ZfcUser\Authentication\Storage\Db::read
      */
-    public function testReadWithoutResolvedEntitySetIdentityObject()
+    public function testReadWithoutResolvedEntitySetIdentityObject(): void
     {
-        $user = $this->getMock('ZfcUser\Entity\User');
+        $user = $this->getMockBuilder(User::class)
+            ->getMock();
         $user->setUsername('zfcUser');
 
         $this->storage->expects($this->once())
-                      ->method('read')
-                      ->will($this->returnValue($user));
+            ->method('read')
+            ->will($this->returnValue($user));
 
         $this->db->setStorage($this->storage);
 
@@ -134,15 +158,15 @@ class DbTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers ZfcUser\Authentication\Storage\Db::write
      */
-    public function testWrite()
+    public function testWrite(): void
     {
-        $reflectionClass = new \ReflectionClass('ZfcUser\Authentication\Storage\Db');
+        $reflectionClass = new ReflectionClass(Db::class);
         $reflectionProperty = $reflectionClass->getProperty('resolvedIdentity');
         $reflectionProperty->setAccessible(true);
 
         $this->storage->expects($this->once())
-                      ->method('write')
-                      ->with('zfcUser');
+            ->method('write')
+            ->with('zfcUser');
 
         $this->db->setStorage($this->storage);
 
@@ -154,9 +178,9 @@ class DbTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers ZfcUser\Authentication\Storage\Db::clear
      */
-    public function testClear()
+    public function testClear(): void
     {
-        $reflectionClass = new \ReflectionClass('ZfcUser\Authentication\Storage\Db');
+        $reflectionClass = new ReflectionClass(Db::class);
         $reflectionProperty = $reflectionClass->getProperty('resolvedIdentity');
         $reflectionProperty->setAccessible(true);
 
@@ -173,31 +197,32 @@ class DbTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers ZfcUser\Authentication\Storage\Db::getMapper
      */
-    public function testGetMapperWithNoMapperSet()
+    public function testGetMapperWithNoMapperSet(): void
     {
-        $sm = $this->getMock('Laminas\ServiceManager\ServiceManager');
+        $sm = $this->getMockBuilder(ServiceManager::class)
+            ->getMock();
         $sm->expects($this->once())
-           ->method('get')
-           ->with('zfcuser_user_mapper')
-           ->will($this->returnValue($this->mapper));
+            ->method('get')
+            ->with('zfcuser_user_mapper')
+            ->will($this->returnValue($this->mapper));
 
         $this->db->setServiceManager($sm);
 
-        $this->assertInstanceOf('ZfcUser\Mapper\UserInterface', $this->db->getMapper());
+        $this->assertInstanceOf(UserInterface::class, $this->db->getMapper());
     }
 
     /**
      * @covers ZfcUser\Authentication\Storage\Db::setMapper
      * @covers ZfcUser\Authentication\Storage\Db::getMapper
      */
-    public function testSetGetMapper()
+    public function testSetGetMapper(): void
     {
-        $mapper = new \ZfcUser\Mapper\User;
+        $mapper = new UserMapper();
         $mapper->setTableName('zfcUser');
 
         $this->db->setMapper($mapper);
 
-        $this->assertInstanceOf('ZfcUser\Mapper\User', $this->db->getMapper());
+        $this->assertInstanceOf(UserMapper::class, $this->db->getMapper());
         $this->assertSame('zfcUser', $this->db->getMapper()->getTableName());
     }
 
@@ -205,13 +230,14 @@ class DbTest extends \PHPUnit_Framework_TestCase
      * @covers ZfcUser\Authentication\Storage\Db::setServiceManager
      * @covers ZfcUser\Authentication\Storage\Db::getServiceManager
      */
-    public function testSetGetServicemanager()
+    public function testSetGetServicemanager(): void
     {
-        $sm = $this->getMock('Laminas\ServiceManager\ServiceManager');
+        $sm = $this->getMockBuilder(ServiceManager::class)
+            ->getMock();
 
         $this->db->setServiceManager($sm);
 
-        $this->assertInstanceOf('Laminas\ServiceManager\ServiceLocatorInterface', $this->db->getServiceManager());
+        $this->assertInstanceOf(ServiceLocatorInterface::class, $this->db->getServiceManager());
         $this->assertSame($sm, $this->db->getServiceManager());
     }
 
@@ -219,20 +245,20 @@ class DbTest extends \PHPUnit_Framework_TestCase
      * @covers ZfcUser\Authentication\Storage\Db::getStorage
      * @covers ZfcUser\Authentication\Storage\Db::setStorage
      */
-    public function testGetStorageWithoutStorageSet()
+    public function testGetStorageWithoutStorageSet(): void
     {
-        $this->assertInstanceOf('Laminas\Authentication\Storage\Session', $this->db->getStorage());
+        $this->assertInstanceOf(Session::class, $this->db->getStorage());
     }
 
     /**
      * @covers ZfcUser\Authentication\Storage\Db::getStorage
      * @covers ZfcUser\Authentication\Storage\Db::setStorage
      */
-    public function testSetGetStorage()
+    public function testSetGetStorage(): void
     {
-        $storage = new \Laminas\Authentication\Storage\Session('ZfcUserStorage');
+        $storage = new Session('ZfcUserStorage');
         $this->db->setStorage($storage);
 
-        $this->assertInstanceOf('Laminas\Authentication\Storage\Session', $this->db->getStorage());
+        $this->assertInstanceOf(Session::class, $this->db->getStorage());
     }
 }

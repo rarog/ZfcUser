@@ -1,65 +1,70 @@
 {
-    "name": "zf-commons/zfc-user",
-    "description": "A generic user registration and authentication module for ZF3/Laminas. Supports Laminas\\Db and Doctrine2.",
-    "type": "library",
-    "license": "BSD-3-Clause",
-    "keywords": [
-        "zf2"
-    ],
-    "homepage": "https://github.com/ZF-Commons/ZfcUser",
-    "authors": [
-        {
-            "name": "Evan Coury",
-            "email": "me@evancoury.com",
-            "homepage": "http://blog.evan.pro/"
-        },
-        {
-            "name": "Kyle Spraggs",
-            "email": "theman@spiffyjr.me",
-            "homepage": "http://www.spiffyjr.me/"
-        }
-    ],
-    "extra": {
-        "branch-alias": {
-            "dev-master": "0.1.x-dev"
-        }
-    },
-    "require": {
-        "php": "^5.5|^7.0",
-        "laminas/laminas-authentication": "^2.5",
-        "laminas/laminas-crypt": "^3.0",
-        "laminas/laminas-form": "^2.9",
-        "laminas/laminas-inputfilter": "^2.7",
-        "laminas/laminas-loader": "^2.5",
-        "laminas/laminas-modulemanager": "^2.7",
-        "laminas/laminas-mvc": "^3.0",
-        "laminas/laminas-servicemanager": "^3.0",
-        "laminas/laminas-stdlib": "^3.0",
-        "laminas/laminas-validator": "^2.8",
-        "laminas/laminas-db": "^2.8",
-        "laminas/laminas-view": "^2.8",
-        "laminas/laminas-session": "^2.7",
-        "laminas/laminas-http": "^2.5",
-        "laminas/laminas-mvc-plugin-flashmessenger": "^1.0",
-        "laminas/laminas-i18n": "^2.7",
-        "laminas/laminas-mvc-plugin-prg": "^1.0",
-        "laminas/laminas-hydrator": "^2.0"
-    },
-    "require-dev": {
-        "phpunit/phpunit": ">=3.7,<4",
-        "phpmd/phpmd": "1.4.*",
-        "squizlabs/php_codesniffer": "1.4.*",
-        "laminas/laminas-captcha": "^2.6"
-    },
-    "suggest": {
-        "laminas/laminas-captcha": "Laminas\\Captcha if you want to use the captcha component"
-    },
-    "autoload": {
-        "psr-0": {
-            "ZfcUser": "src/"
-        },
-        "classmap": [
-            "./Module.php"
-        ]
-    }
+	"name" : "rarog/laminas-user",
+	"description" : "A generic user registration and authentication module for ZF3/Laminas. Supports Laminas\\Db and Doctrine2.",
+	"type" : "library",
+	"license" : "BSD-3-Clause",
+	"keywords" : [
+		"laminas",
+                "user",
+                "authentication"
+	],
+	"homepage" : "https://github.com/rarog/laminas-user",
+	"authors" : [{
+			"name" : "Evan Coury",
+			"email" : "me@evancoury.com",
+			"homepage" : "http://blog.evan.pro/"
+		}, {
+			"name" : "Kyle Spraggs",
+			"email" : "theman@spiffyjr.me",
+			"homepage" : "http://www.spiffyjr.me/"
+		}
+	],
+	"extra" : {
+		"branch-alias" : {
+			"dev-master" : "4.0-dev"
+		}
+	},
+	"require" : {
+		"php" : "^7.2",
+		"laminas/laminas-authentication" : "^2.5",
+		"laminas/laminas-crypt" : "^3.0",
+		"laminas/laminas-form" : "^2.9",
+		"laminas/laminas-inputfilter" : "^2.7",
+		"laminas/laminas-loader" : "^2.5",
+		"laminas/laminas-modulemanager" : "^2.7",
+		"laminas/laminas-mvc" : "^3.0",
+		"laminas/laminas-servicemanager" : "^3.0",
+		"laminas/laminas-stdlib" : "^3.0",
+		"laminas/laminas-validator" : "^2.8",
+		"laminas/laminas-db" : "^2.8",
+		"laminas/laminas-view" : "^2.8",
+		"laminas/laminas-session" : "^2.7",
+		"laminas/laminas-http" : "^2.5",
+		"laminas/laminas-mvc-plugin-flashmessenger" : "^1.0",
+		"laminas/laminas-i18n" : "^2.7",
+		"laminas/laminas-mvc-plugin-prg" : "^1.0",
+		"laminas/laminas-hydrator" : "^3.0"
+	},
+	"require-dev" : {
+		"phpunit/phpunit" : "^8.0 || ^9.0",
+		"phpmd/phpmd" : "1.4.*",
+		"squizlabs/php_codesniffer" : "^3.0",
+		"laminas/laminas-captcha" : "^2.6"
+	},
+	"suggest" : {
+		"laminas/laminas-captcha" : "Laminas\\Captcha if you want to use the captcha component"
+	},
+	"autoload" : {
+		"psr-0" : {
+			"ZfcUser" : "src/"
+		},
+		"classmap" : [
+			"./Module.php"
+		]
+	},
+	"scripts" : {
+		"cs-check" : "phpcs",
+		"cs-fix" : "phpcbf",
+		"test" : "phpunit"
+	}
 }

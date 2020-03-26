@@ -2,16 +2,20 @@
 
 namespace ZfcUserTest\Form;
 
+use Laminas\Validator\EmailAddress;
+use PHPUnit\Framework\TestCase;
 use ZfcUser\Form\ChangePasswordFilter as Filter;
+use ZfcUser\Options\ModuleOptions;
 
-class ChangePasswordFilterTest extends \PHPUnit_Framework_TestCase
+class ChangePasswordFilterTest extends TestCase
 {
-    public function testConstruct()
+    public function testConstruct(): void
     {
-        $options = $this->getMock('ZfcUser\Options\ModuleOptions');
+        $options = $this->getMockBuilder(ModuleOptions::class)
+            ->getMock();
         $options->expects($this->once())
-                ->method('getAuthIdentityFields')
-                ->will($this->returnValue(array('email')));
+            ->method('getAuthIdentityFields')
+            ->will($this->returnValue(['email']));
 
         $filter = new Filter($options);
 
@@ -23,18 +27,19 @@ class ChangePasswordFilterTest extends \PHPUnit_Framework_TestCase
 
         $validators = $inputs['identity']->getValidatorChain()->getValidators();
         $this->assertArrayHasKey('instance', $validators[0]);
-        $this->assertInstanceOf('\Laminas\Validator\EmailAddress', $validators[0]['instance']);
+        $this->assertInstanceOf(EmailAddress::class, $validators[0]['instance']);
     }
 
     /**
      * @dataProvider providerTestConstructIdentityEmail
      */
-    public function testConstructIdentityEmail($onlyEmail)
+    public function testConstructIdentityEmail($onlyEmail): void
     {
-        $options = $this->getMock('ZfcUser\Options\ModuleOptions');
+        $options = $this->getMockBuilder(ModuleOptions::class)
+            ->getMock();
         $options->expects($this->once())
                 ->method('getAuthIdentityFields')
-                ->will($this->returnValue($onlyEmail ? array('email') : array('username')));
+                ->will($this->returnValue($onlyEmail ? ['email'] : ['username']));
 
         $filter = new Filter($options);
 
@@ -52,15 +57,15 @@ class ChangePasswordFilterTest extends \PHPUnit_Framework_TestCase
             // test email as identity
             $validators = $identity->getValidatorChain()->getValidators();
             $this->assertArrayHasKey('instance', $validators[0]);
-            $this->assertInstanceOf('\Laminas\Validator\EmailAddress', $validators[0]['instance']);
+            $this->assertInstanceOf(EmailAddress::class, $validators[0]['instance']);
         }
     }
 
-    public function providerTestConstructIdentityEmail()
+    public function providerTestConstructIdentityEmail(): array
     {
-        return array(
-            array(true),
-            array(false)
-        );
+        return [
+            [true],
+            [false]
+        ];
     }
 }

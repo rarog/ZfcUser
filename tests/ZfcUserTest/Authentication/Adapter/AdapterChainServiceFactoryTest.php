@@ -2,9 +2,16 @@
 
 namespace ZfcUserTest\Authentication\Adapter;
 
+use Laminas\EventManager\EventManager;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use PHPUnit\Framework\TestCase;
+use ZfcUser\Authentication\Adapter\AbstractAdapter;
+use ZfcUser\Authentication\Adapter\AdapterChain;
 use ZfcUser\Authentication\Adapter\AdapterChainServiceFactory;
+use ZfcUser\Authentication\Adapter\Exception\OptionsNotFoundException;
+use ZfcUser\Options\ModuleOptions;
 
-class AdapterChainServiceFactoryTest extends \PHPUnit_Framework_TestCase
+class AdapterChainServiceFactoryTest extends TestCase
 {
     /**
      * The object to be tested.
@@ -37,76 +44,96 @@ class AdapterChainServiceFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Prepare the object to be tested.
+     * {@inheritDoc}
+     * @see \PHPUnit\Framework\TestCase::setUp()
      */
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->serviceLocator = $this->getMock('Laminas\ServiceManager\ServiceLocatorInterface');
+        $this->serviceLocator = $this->getMockBuilder(ServiceLocatorInterface::class)
+            ->getMock();
 
-        $this->options = $this->getMockBuilder('ZfcUser\Options\ModuleOptions')
+        $this->options = $this->getMockBuilder(ModuleOptions::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->serviceLocatorArray = array (
-            'zfcuser_module_options'=>$this->options
-        );
 
         $this->serviceLocator->expects($this->any())
             ->method('get')
-            ->will($this->returnCallback(array($this,'helperServiceLocator')));
+            ->will($this->returnCallback([$this, 'helperServiceLocator']));
 
-        $this->eventManager = $this->getMock('Laminas\EventManager\EventManager');
+        $this->eventManager = $this->getMockBuilder(EventManager::class)
+            ->getMock();
+
+        $this->serviceLocatorArray = [
+            'zfcuser_module_options' => $this->options,
+            'EventManager' => $this->eventManager,
+        ];
 
         $this->factory = new AdapterChainServiceFactory();
     }
 
     /**
+     * {@inheritDoc}
+     * @see \PHPUnit\Framework\TestCase::tearDown()
+     */
+    protected function tearDown(): void
+    {
+        unset($this->factory);
+        unset($this->eventManager);
+        unset($this->serviceLocatorArray);
+        unset($this->options);
+        unset($this->serviceLocator);
+    }
+
+    /**
      * @covers \ZfcUser\Authentication\Adapter\AdapterChainServiceFactory::createService
      */
-    public function testCreateService()
+    public function testCreateService(): void
     {
-        $adapter = array(
-            'adapter1'=> $this->getMock(
-                'ZfcUser\Authentication\Adapter\AbstractAdapter',
-                array('authenticate', 'logout')
-            ),
-            'adapter2'=> $this->getMock(
-                'ZfcUser\Authentication\Adapter\AbstractAdapter',
-                array('authenticate', 'logout')
-            )
-        );
-        $adapterNames = array(100=>'adapter1', 200=>'adapter2');
+        $adapter = [
+            'adapter1' => $this->getMockBuilder(
+                AbstractAdapter::class,
+                ['authenticate', 'logout']
+            )->getMock(),
+            'adapter2' => $this->getMockBuilder(
+                AbstractAdapter::class,
+                ['authenticate', 'logout']
+            )->getMock()
+        ];
+        $adapterNames = [
+            100 => 'adapter1',
+            200 => 'adapter2'
+        ];
 
         $this->serviceLocatorArray = array_merge($this->serviceLocatorArray, $adapter);
 
         $this->options->expects($this->once())
-                      ->method('getAuthAdapters')
-                      ->will($this->returnValue($adapterNames));
+            ->method('getAuthAdapters')
+            ->will($this->returnValue($adapterNames));
 
-        $adapterChain = $this->factory->__invoke($this->serviceLocator, 'ZfcUser\Authentication\Adapter\AdapterChain');
+        $adapterChain = $this->factory->__invoke($this->serviceLocator, AdapterChain::class);
 
-        $this->assertInstanceOf('ZfcUser\Authentication\Adapter\AdapterChain', $adapterChain);
+        $this->assertInstanceOf(AdapterChain::class, $adapterChain);
     }
 
     /**
      * @covers \ZfcUser\Authentication\Adapter\AdapterChainServiceFactory::setOptions
      * @covers \ZfcUser\Authentication\Adapter\AdapterChainServiceFactory::getOptions
      */
-    public function testGetOptionWithSetter()
+    public function testGetOptionWithSetter(): void
     {
         $this->factory->setOptions($this->options);
 
         $options = $this->factory->getOptions();
 
-        $this->assertInstanceOf('ZfcUser\Options\ModuleOptions', $options);
+        $this->assertInstanceOf(ModuleOptions::class, $options);
         $this->assertSame($this->options, $options);
-
 
         $options2 = clone $this->options;
         $this->factory->setOptions($options2);
         $options = $this->factory->getOptions();
 
-        $this->assertInstanceOf('ZfcUser\Options\ModuleOptions', $options);
+        $this->assertInstanceOf(ModuleOptions::class, $options);
         $this->assertNotSame($this->options, $options);
         $this->assertSame($options2, $options);
     }
@@ -114,20 +141,20 @@ class AdapterChainServiceFactoryTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \ZfcUser\Authentication\Adapter\AdapterChainServiceFactory::getOptions
      */
-    public function testGetOptionWithLocator()
+    public function testGetOptionWithLocator(): void
     {
         $options = $this->factory->getOptions($this->serviceLocator);
 
-        $this->assertInstanceOf('ZfcUser\Options\ModuleOptions', $options);
+        $this->assertInstanceOf(ModuleOptions::class, $options);
         $this->assertSame($this->options, $options);
     }
 
     /**
      * @covers \ZfcUser\Authentication\Adapter\AdapterChainServiceFactory::getOptions
-     * @expectedException \ZfcUser\Authentication\Adapter\Exception\OptionsNotFoundException
      */
-    public function testGetOptionFailing()
+    public function testGetOptionFailing(): void
     {
-        $options = $this->factory->getOptions();
+        $this->expectException(OptionsNotFoundException::class);
+        $this->factory->getOptions();
     }
 }

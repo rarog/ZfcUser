@@ -2,23 +2,40 @@
 
 namespace ZfcUserTest\View\Helper;
 
+use Laminas\Authentication\AuthenticationService;
+use PHPUnit\Framework\TestCase;
 use ZfcUser\View\Helper\ZfcUserIdentity as ViewHelper;
 
-class ZfcUserIdentityTest extends \PHPUnit_Framework_TestCase
+class ZfcUserIdentityTest extends TestCase
 {
     protected $helper;
 
     protected $authService;
 
-    public function setUp()
+    /**
+     * {@inheritDoc}
+     * @see \PHPUnit\Framework\TestCase::setUp()
+     */
+    protected function setUp(): void
     {
-        $helper = new ViewHelper;
+        $helper = new ViewHelper();
         $this->helper = $helper;
 
-        $authService = $this->getMock('Laminas\Authentication\AuthenticationService');
+        $authService = $this->getMockBuilder(AuthenticationService::class)
+            ->getMock();
         $this->authService = $authService;
 
         $helper->setAuthService($authService);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \PHPUnit\Framework\TestCase::tearDown()
+     */
+    protected function tearDown(): void
+    {
+        unset($this->authService);
+        unset($this->helper);
     }
 
     /**
@@ -27,11 +44,11 @@ class ZfcUserIdentityTest extends \PHPUnit_Framework_TestCase
     public function testInvokeWithIdentity()
     {
         $this->authService->expects($this->once())
-                          ->method('hasIdentity')
-                          ->will($this->returnValue(true));
+            ->method('hasIdentity')
+            ->will($this->returnValue(true));
         $this->authService->expects($this->once())
-                          ->method('getIdentity')
-                          ->will($this->returnValue('zfcUser'));
+            ->method('getIdentity')
+            ->will($this->returnValue('zfcUser'));
 
         $result = $this->helper->__invoke();
 
@@ -44,8 +61,8 @@ class ZfcUserIdentityTest extends \PHPUnit_Framework_TestCase
     public function testInvokeWithoutIdentity()
     {
         $this->authService->expects($this->once())
-                          ->method('hasIdentity')
-                          ->will($this->returnValue(false));
+            ->method('hasIdentity')
+            ->will($this->returnValue(false));
 
         $result = $this->helper->__invoke();
 

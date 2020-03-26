@@ -2,53 +2,61 @@
 
 namespace ZfcUserTest\Controller;
 
+use Laminas\Http\Headers;
 use Laminas\Http\PhpEnvironment\Request;
 use Laminas\Http\PhpEnvironment\Response;
 use Laminas\Mvc\Application;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\RouteInterface;
 use Laminas\Router\RouteMatch;
+use Laminas\Router\Exception\RuntimeException;
+use PHPUnit\Framework\TestCase;
 use ZfcUser\Controller\RedirectCallback;
 use ZfcUser\Options\ModuleOptions;
+use ReflectionMethod;
 
-class RedirectCallbackTest extends \PHPUnit_Framework_TestCase
+class RedirectCallbackTest extends TestCase
 {
 
     /** @var RedirectCallback */
     protected $redirectCallback;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ModuleOptions */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ModuleOptions */
     protected $moduleOptions;
 
-    /** @var  \PHPUnit_Framework_MockObject_MockObject|RouteInterface */
+    /** @var  \PHPUnit\Framework\MockObject\MockObject|RouteInterface */
     protected $router;
 
-    /** @var  \PHPUnit_Framework_MockObject_MockObject|Application */
+    /** @var  \PHPUnit\Framework\MockObject\MockObject|Application */
     protected $application;
 
-    /** @var  \PHPUnit_Framework_MockObject_MockObject|Request */
+    /** @var  \PHPUnit\Framework\MockObject\MockObject|Request */
     protected $request;
 
-    /** @var  \PHPUnit_Framework_MockObject_MockObject|Response */
+    /** @var  \PHPUnit\Framework\MockObject\MockObject|Response */
     protected $response;
 
-    /** @var  \PHPUnit_Framework_MockObject_MockObject|MvcEvent */
+    /** @var  \PHPUnit\Framework\MockObject\MockObject|MvcEvent */
     protected $mvcEvent;
 
-    /** @var  \PHPUnit_Framework_MockObject_MockObject|RouteMatch */
+    /** @var  \PHPUnit\Framework\MockObject\MockObject|RouteMatch */
     protected $routeMatch;
 
-    public function setUp()
+    /**
+     * {@inheritDoc}
+     * @see \PHPUnit\Framework\TestCase::setUp()
+     */
+    protected function setUp(): void
     {
-        $this->router = $this->getMockBuilder('Laminas\Router\RouteInterface')
+        $this->router = $this->getMockBuilder(RouteInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->moduleOptions = $this->getMockBuilder('ZfcUser\Options\ModuleOptions')
+        $this->moduleOptions = $this->getMockBuilder(ModuleOptions::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->application = $this->getMockBuilder('Laminas\Mvc\Application')
+        $this->application = $this->getMockBuilder(Application::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->setUpApplication();
@@ -60,6 +68,18 @@ class RedirectCallbackTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * {@inheritDoc}
+     * @see \PHPUnit\Framework\TestCase::tearDown()
+     */
+    protected function tearDown(): void
+    {
+        unset($this->redirectCallback);
+        unset($this->application);
+        unset($this->moduleOptions);
+        unset($this->router);
+    }
+
     public function testInvoke()
     {
         $url = 'someUrl';
@@ -68,14 +88,15 @@ class RedirectCallbackTest extends \PHPUnit_Framework_TestCase
             ->method('getMatchedRouteName')
             ->will($this->returnValue('someRoute'));
 
-        $headers = $this->getMock('Laminas\Http\Headers');
+        $headers = $this->getMockBuilder(Headers::class)
+            ->getMock();
         $headers->expects($this->once())
             ->method('addHeaderLine')
             ->with('Location', $url);
 
         $this->router->expects($this->any())
             ->method('assemble')
-            ->with(array(), array('name' => 'zfcuser'))
+            ->with([], ['name' => 'zfcuser'])
             ->will($this->returnValue($url));
 
         $this->response->expects($this->once())
@@ -105,7 +126,7 @@ class RedirectCallbackTest extends \PHPUnit_Framework_TestCase
         if ($get) {
             $this->router->expects($this->any())
                 ->method('assemble')
-                ->with(array(), array('name' => $get))
+                ->with([], ['name' => $get])
                 ->will($getRouteExists);
 
             if ($getRouteExists == $this->returnValue(true)) {
@@ -113,7 +134,7 @@ class RedirectCallbackTest extends \PHPUnit_Framework_TestCase
             }
         }
 
-        if (!$get || !$getRouteExists) {
+        if (! $get || ! $getRouteExists) {
             $this->request->expects($this->once())
                 ->method('getPost')
                 ->will($this->returnValue($post));
@@ -121,7 +142,7 @@ class RedirectCallbackTest extends \PHPUnit_Framework_TestCase
             if ($post) {
                 $this->router->expects($this->any())
                     ->method('assemble')
-                    ->with(array(), array('name' => $post))
+                    ->with([], ['name' => $post])
                     ->will($postRouteExists);
 
                 if ($postRouteExists == $this->returnValue(true)) {
@@ -130,8 +151,8 @@ class RedirectCallbackTest extends \PHPUnit_Framework_TestCase
             }
         }
 
-        $method = new \ReflectionMethod(
-            'ZfcUser\Controller\RedirectCallback',
+        $method = new ReflectionMethod(
+            RedirectCallback::class,
             'getRedirectRouteFromRequest'
         );
         $method->setAccessible(true);
@@ -142,16 +163,21 @@ class RedirectCallbackTest extends \PHPUnit_Framework_TestCase
 
     public function providerGetRedirectRouteFromRequest()
     {
-        return array(
-            array('user', false, $this->returnValue('route'), false),
-            array('user', false, $this->returnValue('route'), $this->returnValue(true)),
-            array('user', 'user', $this->returnValue('route'), $this->returnValue(true)),
-            array('user', 'user', $this->throwException(new \Laminas\Router\Exception\RuntimeException), $this->returnValue(true)),
-            array('user', 'user', $this->throwException(new \Laminas\Router\Exception\RuntimeException), $this->throwException(new \Laminas\Router\Exception\RuntimeException)),
-            array(false, 'user', false, $this->returnValue(true)),
-            array(false, 'user', false, $this->throwException(new \Laminas\Router\Exception\RuntimeException)),
-            array(false, 'user', false, $this->throwException(new \Laminas\Router\Exception\RuntimeException)),
-        );
+        return [
+            ['user', false, $this->returnValue('route'), false],
+            ['user', false, $this->returnValue('route'), $this->returnValue(true)],
+            ['user', 'user', $this->returnValue('route'), $this->returnValue(true)],
+            ['user', 'user', $this->throwException(new RuntimeException()), $this->returnValue(true)],
+            [
+                'user',
+                'user',
+                $this->throwException(new RuntimeException()),
+                $this->throwException(new RuntimeException())
+            ],
+            [false, 'user', false, $this->returnValue(true)],
+            [false, 'user', false, $this->throwException(new RuntimeException())],
+            [false, 'user', false, $this->throwException(new RuntimeException())],
+        ];
     }
 
     public function testRouteExistsRouteExists()
@@ -160,10 +186,10 @@ class RedirectCallbackTest extends \PHPUnit_Framework_TestCase
 
         $this->router->expects($this->once())
             ->method('assemble')
-            ->with(array(), array('name' => $route));
+            ->with([], ['name' => $route]);
 
-        $method = new \ReflectionMethod(
-            'ZfcUser\Controller\RedirectCallback',
+        $method = new ReflectionMethod(
+            RedirectCallback::class,
             'routeExists'
         );
         $method->setAccessible(true);
@@ -178,11 +204,11 @@ class RedirectCallbackTest extends \PHPUnit_Framework_TestCase
 
         $this->router->expects($this->once())
             ->method('assemble')
-            ->with(array(), array('name' => $route))
-            ->will($this->throwException(new \Laminas\Router\Exception\RuntimeException));
+            ->with([], ['name' => $route])
+            ->will($this->throwException(new RuntimeException()));
 
-        $method = new \ReflectionMethod(
-            'ZfcUser\Controller\RedirectCallback',
+        $method = new ReflectionMethod(
+            RedirectCallback::class,
             'routeExists'
         );
         $method->setAccessible(true);
@@ -204,7 +230,7 @@ class RedirectCallbackTest extends \PHPUnit_Framework_TestCase
             ->method('assemble');
         $this->router->expects($this->at(1))
             ->method('assemble')
-            ->with(array(), array('name' => $optionsReturn))
+            ->with([], ['name' => $optionsReturn])
             ->will($this->returnValue($expectedResult));
 
         if ($optionsMethod) {
@@ -212,8 +238,8 @@ class RedirectCallbackTest extends \PHPUnit_Framework_TestCase
                 ->method($optionsMethod)
                 ->will($this->returnValue($optionsReturn));
         }
-        $method = new \ReflectionMethod(
-            'ZfcUser\Controller\RedirectCallback',
+        $method = new ReflectionMethod(
+            RedirectCallback::class,
             'getRedirect'
         );
         $method->setAccessible(true);
@@ -224,12 +250,12 @@ class RedirectCallbackTest extends \PHPUnit_Framework_TestCase
 
     public function providerGetRedirectNoRedirectParam()
     {
-        return array(
-            array('zfcuser/login', 'zfcuser', '/user', 'getLoginRedirectRoute'),
-            array('zfcuser/authenticate', 'zfcuser', '/user', 'getLoginRedirectRoute'),
-            array('zfcuser/logout', 'zfcuser/login', '/user/login', 'getLogoutRedirectRoute'),
-            array('testDefault', 'zfcuser', '/home', false),
-        );
+        return [
+            ['zfcuser/login', 'zfcuser', '/user', 'getLoginRedirectRoute'],
+            ['zfcuser/authenticate', 'zfcuser', '/user', 'getLoginRedirectRoute'],
+            ['zfcuser/logout', 'zfcuser/login', '/user/login', 'getLogoutRedirectRoute'],
+            ['testDefault', 'zfcuser', '/home', false],
+        ];
     }
 
     public function testGetRedirectWithOptionOnButNoRedirect()
@@ -248,11 +274,11 @@ class RedirectCallbackTest extends \PHPUnit_Framework_TestCase
 
         $this->router->expects($this->once())
             ->method('assemble')
-            ->with(array(), array('name' => $route))
+            ->with([], ['name' => $route])
             ->will($this->returnValue($expectedResult));
 
-        $method = new \ReflectionMethod(
-            'ZfcUser\Controller\RedirectCallback',
+        $method = new ReflectionMethod(
+            RedirectCallback::class,
             'getRedirect'
         );
         $method->setAccessible(true);
@@ -273,20 +299,20 @@ class RedirectCallbackTest extends \PHPUnit_Framework_TestCase
 
         $this->router->expects($this->at(0))
             ->method('assemble')
-            ->with(array(), array('name' => $redirect))
-            ->will($this->throwException(new \Laminas\Router\Exception\RuntimeException));
+            ->with([], ['name' => $redirect])
+            ->will($this->throwException(new RuntimeException()));
 
         $this->router->expects($this->at(1))
             ->method('assemble')
-            ->with(array(), array('name' => $route))
+            ->with([], ['name' => $route])
             ->will($this->returnValue($expectedResult));
 
         $this->moduleOptions->expects($this->once())
             ->method('getLoginRedirectRoute')
             ->will($this->returnValue($route));
 
-        $method = new \ReflectionMethod(
-            'ZfcUser\Controller\RedirectCallback',
+        $method = new ReflectionMethod(
+            RedirectCallback::class,
             'getRedirect'
         );
         $method->setAccessible(true);
@@ -297,19 +323,19 @@ class RedirectCallbackTest extends \PHPUnit_Framework_TestCase
 
     private function setUpApplication()
     {
-        $this->request = $this->getMockBuilder('Laminas\Http\PhpEnvironment\Request')
+        $this->request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->response = $this->getMockBuilder('Laminas\Http\PhpEnvironment\Response')
+        $this->response = $this->getMockBuilder(Response::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->routeMatch = $this->getMockBuilder('Laminas\Router\RouteMatch')
+        $this->routeMatch = $this->getMockBuilder(RouteMatch::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->mvcEvent = $this->getMockBuilder('Laminas\Mvc\MvcEvent')
+        $this->mvcEvent = $this->getMockBuilder(MvcEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->mvcEvent->expects($this->any())

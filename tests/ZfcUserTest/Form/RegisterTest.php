@@ -2,27 +2,33 @@
 
 namespace ZfcUserTest\Form;
 
+use Laminas\Captcha\AbstractAdapter;
+use Laminas\Form\Element\Captcha;
+use PHPUnit\Framework\TestCase;
 use ZfcUser\Form\Register as Form;
+use ZfcUser\Options\RegistrationOptionsInterface;
+use ReflectionProperty;
 
-class RegisterTest extends \PHPUnit_Framework_TestCase
+class RegisterTest extends TestCase
 {
     /**
      * @dataProvider providerTestConstruct
      */
-    public function testConstruct($useCaptcha = false)
+    public function testConstruct($useCaptcha = false): void
     {
-        $options = $this->getMock('ZfcUser\Options\RegistrationOptionsInterface');
+        $options = $this->getMockBuilder(RegistrationOptionsInterface::class)
+            ->getMock();
         $options->expects($this->once())
-                ->method('getEnableUsername')
-                ->will($this->returnValue(false));
+            ->method('getEnableUsername')
+            ->will($this->returnValue(false));
         $options->expects($this->once())
-                ->method('getEnableDisplayName')
-                ->will($this->returnValue(false));
+            ->method('getEnableDisplayName')
+            ->will($this->returnValue(false));
         $options->expects($this->any())
-                ->method('getUseRegistrationFormCaptcha')
-                ->will($this->returnValue($useCaptcha));
-        if ($useCaptcha && class_exists('\Laminas\Captcha\AbstractAdapter')) {
-            $captcha = $this->getMockForAbstractClass('\Laminas\Captcha\AbstractAdapter');
+            ->method('getUseRegistrationFormCaptcha')
+            ->will($this->returnValue($useCaptcha));
+        if ($useCaptcha && class_exists(AbstractAdapter::class)) {
+            $captcha = $this->getMockForAbstractClass(AbstractAdapter::class);
 
             $options->expects($this->once())
                 ->method('getFormCaptchaOptions')
@@ -41,38 +47,41 @@ class RegisterTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('passwordVerify', $elements);
     }
 
-    public function providerTestConstruct()
+    public function providerTestConstruct(): array
     {
-        return array(
-            array(true),
-            array(false)
-        );
+        return [
+            [true],
+            [false]
+        ];
     }
 
-    public function testSetGetRegistrationOptions()
+    public function testSetGetRegistrationOptions(): void
     {
-        $options = $this->getMock('ZfcUser\Options\RegistrationOptionsInterface');
+        $options = $this->getMockBuilder(RegistrationOptionsInterface::class)
+            ->getMock();
         $options->expects($this->once())
-                ->method('getEnableUsername')
-                ->will($this->returnValue(false));
+            ->method('getEnableUsername')
+            ->will($this->returnValue(false));
         $options->expects($this->once())
-                ->method('getEnableDisplayName')
-                ->will($this->returnValue(false));
+            ->method('getEnableDisplayName')
+            ->will($this->returnValue(false));
         $options->expects($this->any())
-                ->method('getUseRegistrationFormCaptcha')
-                ->will($this->returnValue(false));
+            ->method('getUseRegistrationFormCaptcha')
+            ->will($this->returnValue(false));
         $form = new Form(null, $options);
 
         $this->assertSame($options, $form->getRegistrationOptions());
 
-        $optionsNew = $this->getMock('ZfcUser\Options\RegistrationOptionsInterface');
+        $optionsNew = $this->getMockBuilder(RegistrationOptionsInterface::class)
+            ->getMock();
         $form->setRegistrationOptions($optionsNew);
         $this->assertSame($optionsNew, $form->getRegistrationOptions());
     }
 
-    public function testSetCaptchaElement()
+    public function testSetCaptchaElement(): void
     {
-        $options = $this->getMock('ZfcUser\Options\RegistrationOptionsInterface');
+        $options = $this->getMockBuilder(RegistrationOptionsInterface::class)
+            ->getMock();
         $options->expects($this->once())
                 ->method('getEnableUsername')
                 ->will($this->returnValue(false));
@@ -83,7 +92,8 @@ class RegisterTest extends \PHPUnit_Framework_TestCase
                 ->method('getUseRegistrationFormCaptcha')
                 ->will($this->returnValue(false));
 
-        $captcha = $this->getMock('\Laminas\Form\Element\Captcha');
+        $captcha = $this->getMockBuilder(Captcha::class)
+            ->getMock();
         $form = new Form(null, $options);
 
         $form->setCaptchaElement($captcha);
@@ -100,9 +110,9 @@ class RegisterTest extends \PHPUnit_Framework_TestCase
      * @param mixed $value = null
      * @return \ReflectionProperty
      */
-    public function helperMakePropertyAccessable($objectOrClass, $property, $value = null)
+    public function helperMakePropertyAccessable($objectOrClass, $property, $value = null): ReflectionProperty
     {
-        $reflectionProperty = new \ReflectionProperty($objectOrClass, $property);
+        $reflectionProperty = new ReflectionProperty($objectOrClass, $property);
         $reflectionProperty->setAccessible(true);
 
         if ($value !== null) {

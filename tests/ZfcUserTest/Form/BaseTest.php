@@ -2,11 +2,12 @@
 
 namespace ZfcUserTest\Form;
 
+use PHPUnit\Framework\TestCase;
 use ZfcUser\Form\Base as Form;
 
-class BaseTest extends \PHPUnit_Framework_TestCase
+class BaseTest extends TestCase
 {
-    public function testConstruct()
+    public function testConstruct(): void
     {
         $form = new Form();
 
