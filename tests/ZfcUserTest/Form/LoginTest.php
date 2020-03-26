@@ -2,6 +2,7 @@
 
 namespace ZfcUserTest\Form;
 
+use Laminas\Captcha\AbstractAdapter;
 use PHPUnit\Framework\TestCase;
 use ZfcUser\Form\Login as Form;
 use ZfcUser\Options\AuthenticationOptionsInterface;
@@ -12,13 +13,23 @@ class LoginTest extends TestCase
      * @covers ZfcUser\Form\Login::__construct
      * @dataProvider providerTestConstruct
      */
-    public function testConstruct($authIdentityFields = []): void
+    public function testConstruct(array $authIdentityFields = [], bool $useCaptcha): void
     {
         $options = $this->getMockBuilder(AuthenticationOptionsInterface::class)
             ->getMock();
         $options->expects($this->once())
             ->method('getAuthIdentityFields')
             ->will($this->returnValue($authIdentityFields));
+        $options->expects($this->any())
+            ->method('getUseLoginFormCaptcha')
+            ->will($this->returnValue($useCaptcha));
+        if ($useCaptcha && class_exists(AbstractAdapter::class)) {
+            $captcha = $this->getMockForAbstractClass(AbstractAdapter::class);
+
+            $options->expects($this->once())
+                ->method('getFormCaptchaOptions')
+                ->will($this->returnValue($captcha));
+        }
 
         $form = new Form(null, $options);
 
@@ -27,6 +38,12 @@ class LoginTest extends TestCase
         $this->assertArrayHasKey('identity', $elements);
         $this->assertArrayHasKey('credential', $elements);
         $this->assertArrayHasKey('csrf', $elements);
+
+        if ($useCaptcha) {
+            $this->assertArrayHasKey('captcha', $elements);
+        } else {
+            $this->assertArrayNotHasKey('captcha', $elements);
+        }
 
         $expectedLabel = '';
         if (count($authIdentityFields) > 0) {
@@ -59,9 +76,10 @@ class LoginTest extends TestCase
     public function providerTestConstruct(): array
     {
         return [
-            [[]],
-            [['email']],
-            [['username','email']],
+            [[], false],
+            [['email'], false],
+            [['username','email'], false],
+            [[], true],
         ];
     }
 }

@@ -319,6 +319,24 @@ class ModuleOptionsTest extends TestCase
     }
 
     /**
+     * @covers ZfcUser\Options\ModuleOptions::getUseLoginFormCaptcha
+     * @covers ZfcUser\Options\ModuleOptions::setUseLoginFormCaptcha
+     */
+    public function testSetGetUseLoginFormCaptcha()
+    {
+        $this->options->setUseLoginFormCaptcha(true);
+        $this->assertTrue($this->options->getUseLoginFormCaptcha());
+    }
+
+    /**
+     * @covers ZfcUser\Options\ModuleOptions::getUseLoginFormCaptcha
+     */
+    public function testGetUseLoginFormCaptcha()
+    {
+        $this->assertFalse($this->options->getUseLoginFormCaptcha());
+    }
+
+    /**
      * @covers ZfcUser\Options\ModuleOptions::getUserEntityClass
      * @covers ZfcUser\Options\ModuleOptions::setUserEntityClass
      */

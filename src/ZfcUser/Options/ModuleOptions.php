@@ -99,6 +99,11 @@ class ModuleOptions extends AbstractOptions implements
     protected $useRegistrationFormCaptcha = false;
 
     /**
+     * @var bool
+     */
+    protected $useLoginFormCaptcha = false;
+
+    /**
      * @var int
      */
     protected $passwordCost = 14;
@@ -471,6 +476,28 @@ class ModuleOptions extends AbstractOptions implements
     public function getUseRegistrationFormCaptcha()
     {
         return $this->useRegistrationFormCaptcha;
+    }
+
+    /**
+     * set use a captcha in login form
+     *
+     * @param bool $useRegistrationFormCaptcha
+     * @return ModuleOptions
+     */
+    public function setUseLoginFormCaptcha(bool $useLoginFormCaptcha): ModuleOptions
+    {
+        $this->useLoginFormCaptcha = $useLoginFormCaptcha;
+        return $this;
+    }
+
+    /**
+     * get use a captcha in login form
+     *
+     * @return bool
+     */
+    public function getUseLoginFormCaptcha(): bool
+    {
+        return $this->useLoginFormCaptcha;
     }
 
     /**

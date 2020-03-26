@@ -7,6 +7,7 @@ use Laminas\Form\Element\Password;
 use Laminas\Form\Element\Text;
 use ZfcUser\Options\AuthenticationOptionsInterface;
 use Laminas\Form\Element\Csrf;
+use Laminas\Form\Element\Captcha;
 
 class Login extends ProvidesEventsForm
 {
@@ -61,11 +62,16 @@ class Login extends ProvidesEventsForm
             ],
         ]);
 
-        // @todo: Fix this
-        // 1) getValidator() is a protected method
-        // 2) i don't believe the login form is actually being validated by the login action
-        // (but keep in mind we don't want to show invalid username vs invalid password or
-        // anything like that, it should just say "login failed" without any additional info)
+        if ($this->getAuthenticationOptions()->getUseLoginFormCaptcha()) {
+            $this->add([
+                'name' => 'captcha',
+                'type' => Captcha::class,
+                'options' => [
+                    'label' => 'Please type the following text',
+                    'captcha' => $this->getAuthenticationOptions()->getFormCaptchaOptions(),
+                ],
+            ]);
+        }
 
         $submitElement = new Button('submit');
         $submitElement

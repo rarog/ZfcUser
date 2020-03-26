@@ -16,6 +16,9 @@ class LoginFilter extends ProvidesEventsInputFilter
             'name' => 'identity',
             'required'  => true,
             'validators' => [],
+            'filters' => [
+                ['name' => StringTrim::class],
+            ],
         ];
 
         $identityFields = $options->getAuthIdentityFields();

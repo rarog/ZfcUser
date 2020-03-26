@@ -45,6 +45,12 @@ class RegisterTest extends TestCase
         $this->assertArrayHasKey('password', $elements);
         $this->assertArrayHasKey('passwordVerify', $elements);
         $this->assertArrayHasKey('csrf', $elements);
+
+        if ($useCaptcha) {
+            $this->assertArrayHasKey('captcha', $elements);
+        } else {
+            $this->assertArrayNotHasKey('captcha', $elements);
+        }
     }
 
     public function providerTestConstruct(): array
