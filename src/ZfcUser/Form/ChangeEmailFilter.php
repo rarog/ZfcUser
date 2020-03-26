@@ -3,6 +3,8 @@
 namespace ZfcUser\Form;
 
 use Laminas\InputFilter\InputFilter;
+use Laminas\Validator\EmailAddress;
+use Laminas\Validator\Identical;
 use ZfcUser\Options\AuthenticationOptionsInterface;
 
 class ChangeEmailFilter extends InputFilter
@@ -13,43 +15,43 @@ class ChangeEmailFilter extends InputFilter
     {
         $this->emailValidator = $emailValidator;
 
-        $identityParams = array(
-            'name'       => 'identity',
-            'required'   => true,
-            'validators' => array()
-        );
+        $identityParams = [
+            'name' => 'identity',
+            'required' => true,
+            'validators' => [],
+        ];
 
         $identityFields = $options->getAuthIdentityFields();
-        if ($identityFields == array('email')) {
-            $validators = array('name' => 'EmailAddress');
+        if ($identityFields == ['email']) {
+            $validators = ['name' => EmailAddress::class];
             array_push($identityParams['validators'], $validators);
         }
 
         $this->add($identityParams);
 
-        $this->add(array(
-            'name'       => 'newIdentity',
-            'required'   => true,
-            'validators' => array(
-                array(
-                    'name' => 'EmailAddress'
-                ),
-                $this->emailValidator
-            ),
-        ));
+        $this->add([
+            'name' => 'newIdentity',
+            'required' => true,
+            'validators' => [
+                [
+                    'name' => EmailAddress::class,
+                ],
+                $this->emailValidator,
+            ],
+        ]);
 
-        $this->add(array(
-            'name'       => 'newIdentityVerify',
-            'required'   => true,
-            'validators' => array(
-                array(
-                    'name' => 'identical',
-                    'options' => array(
+        $this->add([
+            'name' => 'newIdentityVerify',
+            'required' => true,
+            'validators' => [
+                [
+                    'name' => Identical::class,
+                    'options' => [
                         'token' => 'newIdentity'
-                    )
-                ),
-            ),
-        ));
+                    ]
+                ],
+            ],
+        ]);
     }
 
     public function getEmailValidator()

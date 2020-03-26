@@ -2,8 +2,11 @@
 
 namespace ZfcUser\Form;
 
-use Laminas\Form\Element;
+use Laminas\Form\Element\Button;
+use Laminas\Form\Element\Password;
+use Laminas\Form\Element\Text;
 use ZfcUser\Options\AuthenticationOptionsInterface;
+use Laminas\Form\Element\Csrf;
 
 class Login extends ProvidesEventsForm
 {
@@ -18,56 +21,62 @@ class Login extends ProvidesEventsForm
 
         parent::__construct($name);
 
-        $this->add(array(
+        $this->add([
             'name' => 'identity',
-            'options' => array(
+            'type' => Text::class,
+            'options' => [
                 'label' => '',
-            ),
-            'attributes' => array(
+            ],
+            'attributes' => [
                 'id' => 'identity',
-                'type' => 'text',
-            ),
-        ));
+            ],
+        ]);
 
         $emailElement = $this->get('identity');
         $label = $emailElement->getLabel('label');
         // @TODO: make translation-friendly
         foreach ($this->getAuthenticationOptions()->getAuthIdentityFields() as $mode) {
-            $label = (!empty($label) ? $label . ' or ' : '') . ucfirst($mode);
+            $label = (! empty($label) ? $label . ' or ' : '') . ucfirst($mode);
         }
         $emailElement->setLabel($label);
         //
-        $this->add(array(
+        $this->add([
             'name' => 'credential',
-            'type' => 'password',
-            'options' => array(
+            'type' => Password::class,
+            'options' => [
                 'label' => 'Password',
-            ),
-            'attributes' => array(
+            ],
+            'attributes' => [
                 'id' => 'credential',
-                'type' => 'password',
-            ),
-        ));
+            ],
+        ]);
+
+        $this->add([
+            'name' => 'csrf',
+            'type' => Csrf::class,
+            'options' => [
+                'csrf_options' => [
+                    'timeout' => $this->getAuthenticationOptions()->getLoginFormTimeout(),
+                ],
+            ],
+        ]);
 
         // @todo: Fix this
         // 1) getValidator() is a protected method
         // 2) i don't believe the login form is actually being validated by the login action
         // (but keep in mind we don't want to show invalid username vs invalid password or
         // anything like that, it should just say "login failed" without any additional info)
-        //$csrf = new Element\Csrf('csrf');
-        //$csrf->getValidator()->setTimeout($options->getLoginFormTimeout());
-        //$this->add($csrf);
 
-        $submitElement = new Element\Button('submit');
+        $submitElement = new Button('submit');
         $submitElement
             ->setLabel('Sign In')
-            ->setAttributes(array(
-                'type'  => 'submit',
-            ));
+            ->setAttributes([
+                'type' => 'submit',
+            ]);
 
-        $this->add($submitElement, array(
+        $this->add($submitElement, [
             'priority' => -100,
-        ));
+        ]);
     }
 
     /**

@@ -24,6 +24,7 @@ class ChangePasswordTest extends TestCase
         $this->assertArrayHasKey('credential', $elements);
         $this->assertArrayHasKey('newCredential', $elements);
         $this->assertArrayHasKey('newCredentialVerify', $elements);
+        $this->assertArrayHasKey('csrf', $elements);
     }
 
     /**

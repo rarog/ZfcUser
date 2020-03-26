@@ -2,6 +2,10 @@
 
 namespace ZfcUser\Form;
 
+use Laminas\Form\Element\Csrf;
+use Laminas\Form\Element\Hidden;
+use Laminas\Form\Element\Password;
+use Laminas\Form\Element\Submit;
 use ZfcUser\Options\AuthenticationOptionsInterface;
 
 class ChangePassword extends ProvidesEventsForm
@@ -17,59 +21,67 @@ class ChangePassword extends ProvidesEventsForm
 
         parent::__construct($name);
 
-        $this->add(array(
+        $this->add([
             'name' => 'identity',
-            'options' => array(
+            'type' => Hidden::class,
+            'options' => [
                 'label' => '',
-            ),
-            'attributes' => array(
+            ],
+            'attributes' => [
                 'id' => 'identity',
-                'type' => 'hidden',
-            ),
-        ));
+            ],
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'credential',
-            'type' => 'password',
-            'options' => array(
+            'type' => Password::class,
+            'options' => [
                 'label' => 'Current Password',
-            ),
-            'attributes' => array(
+            ],
+            'attributes' => [
                 'id' => 'credential',
-                'type' => 'password',
-            ),
-        ));
+            ],
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'newCredential',
-            'options' => array(
+            'type' => Password::class,
+            'options' => [
                 'label' => 'New Password',
-            ),
-            'attributes' => array(
+            ],
+            'attributes' => [
                 'id' => 'newCredential',
-                'type' => 'password',
-            ),
-        ));
+            ],
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'newCredentialVerify',
-            'type' => 'password',
-            'options' => array(
+            'type' => Password::class,
+            'options' => [
                 'label' => 'Verify New Password',
-            ),
-            'attributes' => array(
+            ],
+            'attributes' => [
                 'id' => 'newCredentialVerify',
-                'type' => 'password',
-            ),
-        ));
+            ],
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'submit',
-            'attributes' => array(
+            'type' => Submit::class,
+            'attributes' => [
                 'value' => 'Submit',
-                'type'  => 'submit'
-            ),
-        ));
+            ],
+        ]);
+
+        $this->add([
+            'name' => 'csrf',
+            'type' => Csrf::class,
+            'options' => [
+                'csrf_options' => [
+                    'timeout' => $this->getAuthenticationOptions()->getLoginFormTimeout(),
+                ],
+            ],
+        ]);
     }
 
     /**

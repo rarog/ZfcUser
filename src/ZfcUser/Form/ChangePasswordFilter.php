@@ -2,79 +2,83 @@
 
 namespace ZfcUser\Form;
 
+use Laminas\Filter\StringTrim;
 use Laminas\InputFilter\InputFilter;
+use Laminas\Validator\EmailAddress;
+use Laminas\Validator\Identical;
+use Laminas\Validator\StringLength;
 use ZfcUser\Options\AuthenticationOptionsInterface;
 
 class ChangePasswordFilter extends InputFilter
 {
     public function __construct(AuthenticationOptionsInterface $options)
     {
-        $identityParams = array(
-            'name'       => 'identity',
-            'required'   => true,
-            'validators' => array()
-        );
+        $identityParams = [
+            'name' => 'identity',
+            'required' => true,
+            'validators' => [],
+        ];
 
         $identityFields = $options->getAuthIdentityFields();
-        if ($identityFields == array('email')) {
-            $validators = array('name' => 'EmailAddress');
+        if ($identityFields == ['email']) {
+            $validators = ['name' => EmailAddress::class];
             array_push($identityParams['validators'], $validators);
         }
 
         $this->add($identityParams);
 
-        $this->add(array(
-            'name'       => 'credential',
-            'required'   => true,
-            'validators' => array(
-                array(
-                    'name'    => 'StringLength',
-                    'options' => array(
+        $this->add([
+            'name' => 'credential',
+            'required' => true,
+            'validators' => [
+                [
+                    'name' => StringLength::class,
+                    'options' => [
                         'min' => 6,
-                    ),
-                ),
-            ),
-            'filters'   => array(
-                array('name' => 'StringTrim'),
-            ),
-        ));
+                    ],
+                ],
+            ],
+            'filters' => [
+                ['name' => StringTrim::class],
+            ],
+        ]);
 
-        $this->add(array(
-            'name'       => 'newCredential',
-            'required'   => true,
-            'validators' => array(
-                array(
-                    'name'    => 'StringLength',
-                    'options' => array(
+        $this->add([
+            'name' => 'newCredential',
+            'required' => true,
+            'validators' => [
+                [
+                    'name' => StringLength::class,
+                    'options' => [
                         'min' => 6,
-                    ),
-                ),
-            ),
-            'filters'   => array(
-                array('name' => 'StringTrim'),
-            ),
-        ));
+                    ],
+                ],
+            ],
+            'filters' => [
+                ['name' => StringTrim::class],
+            ],
+        ]);
 
-        $this->add(array(
-            'name'       => 'newCredentialVerify',
-            'required'   => true,
-            'validators' => array(
-                array(
-                    'name'    => 'StringLength',
-                    'options' => array(
+        $this->add([
+            'name' => 'newCredentialVerify',
+            'required' => true,
+            'validators' => [
+                [
+                    'name' => StringLength::class,
+                    'options' => [
                         'min' => 6,
-                    ),
-                ),
-                array(
-                    'name' => 'identical',
-                    'options' => array(
+                    ],
+                ],
+                [
+                    'name' => Identical::class,
+                    'options' => [
                         'token' => 'newCredential'
-                    )
-                ),
-            ),
-            'filters'   => array(
-                array('name' => 'StringTrim'),
-            ),
-        ));
+                    ]
+                ],
+            ],
+            'filters' => [
+                ['name' => StringTrim::class],
+            ],
+        ]);
     }
 }

@@ -3,7 +3,6 @@
 namespace ZfcUserTest\Form;
 
 use Laminas\Captcha\AbstractAdapter;
-use Laminas\Form\Element\Captcha;
 use PHPUnit\Framework\TestCase;
 use ZfcUser\Form\Register as Form;
 use ZfcUser\Options\RegistrationOptionsInterface;
@@ -45,6 +44,7 @@ class RegisterTest extends TestCase
         $this->assertArrayHasKey('email', $elements);
         $this->assertArrayHasKey('password', $elements);
         $this->assertArrayHasKey('passwordVerify', $elements);
+        $this->assertArrayHasKey('csrf', $elements);
     }
 
     public function providerTestConstruct(): array
@@ -77,31 +77,6 @@ class RegisterTest extends TestCase
         $form->setRegistrationOptions($optionsNew);
         $this->assertSame($optionsNew, $form->getRegistrationOptions());
     }
-
-    public function testSetCaptchaElement(): void
-    {
-        $options = $this->getMockBuilder(RegistrationOptionsInterface::class)
-            ->getMock();
-        $options->expects($this->once())
-                ->method('getEnableUsername')
-                ->will($this->returnValue(false));
-        $options->expects($this->once())
-                ->method('getEnableDisplayName')
-                ->will($this->returnValue(false));
-        $options->expects($this->any())
-                ->method('getUseRegistrationFormCaptcha')
-                ->will($this->returnValue(false));
-
-        $captcha = $this->getMockBuilder(Captcha::class)
-            ->getMock();
-        $form = new Form(null, $options);
-
-        $form->setCaptchaElement($captcha);
-
-        $reflection = $this->helperMakePropertyAccessable($form, 'captchaElement');
-        $this->assertSame($captcha, $reflection->getValue($form));
-    }
-
 
     /**
      *

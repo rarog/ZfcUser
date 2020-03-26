@@ -2,13 +2,12 @@
 
 namespace ZfcUser\Form;
 
-use Laminas\Form\Element\Captcha as Captcha;
+use Laminas\Form\Element\Captcha;
 use ZfcUser\Options\RegistrationOptionsInterface;
+use Laminas\Form\Element\Csrf;
 
 class Register extends Base
 {
-    protected $captchaElement= null;
-
     /**
      * @var RegistrationOptionsInterface
      */
@@ -24,33 +23,35 @@ class Register extends Base
 
         parent::__construct($name);
 
+        $this->add([
+            'name' => 'csrf',
+            'type' => Csrf::class,
+            'options' => [
+                'csrf_options' => [
+                    'timeout' => $this->getRegistrationOptions()->getUserFormTimeout(),
+                ],
+            ],
+        ]);
+
         if ($this->getRegistrationOptions()->getUseRegistrationFormCaptcha()) {
-            $this->add(array(
+            $this->add([
                 'name' => 'captcha',
-                'type' => 'Laminas\Form\Element\Captcha',
-                'options' => array(
+                'type' => Captcha::class,
+                'options' => [
                     'label' => 'Please type the following text',
                     'captcha' => $this->getRegistrationOptions()->getFormCaptchaOptions(),
-                ),
-            ));
+                ],
+            ]);
         }
 
         $this->remove('userId');
-        if (!$this->getRegistrationOptions()->getEnableUsername()) {
+        if (! $this->getRegistrationOptions()->getEnableUsername()) {
             $this->remove('username');
         }
-        if (!$this->getRegistrationOptions()->getEnableDisplayName()) {
+        if (! $this->getRegistrationOptions()->getEnableDisplayName()) {
             $this->remove('display_name');
         }
-        if ($this->getRegistrationOptions()->getUseRegistrationFormCaptcha() && $this->captchaElement) {
-            $this->add($this->captchaElement, array('name'=>'captcha'));
-        }
         $this->get('submit')->setLabel('Register');
-    }
-
-    public function setCaptchaElement(Captcha $captchaElement)
-    {
-        $this->captchaElement= $captchaElement;
     }
 
     /**

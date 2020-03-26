@@ -24,6 +24,7 @@ class ChangeEmailTest extends TestCase
         $this->assertArrayHasKey('newIdentity', $elements);
         $this->assertArrayHasKey('newIdentityVerify', $elements);
         $this->assertArrayHasKey('credential', $elements);
+        $this->assertArrayHasKey('csrf', $elements);
     }
 
     /**

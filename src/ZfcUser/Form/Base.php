@@ -2,7 +2,10 @@
 
 namespace ZfcUser\Form;
 
-use Laminas\Form\Element;
+use Laminas\Form\Element\Button;
+use Laminas\Form\Element\Hidden;
+use Laminas\Form\Element\Password;
+use Laminas\Form\Element\Text;
 
 class Base extends ProvidesEventsForm
 {
@@ -10,89 +13,75 @@ class Base extends ProvidesEventsForm
     {
         parent::__construct($name);
 
-        $this->add(array(
+        $this->add([
             'name' => 'username',
-            'options' => array(
+            'type' => Text::class,
+            'options' => [
                 'label' => 'Username',
-            ),
-            'attributes' => array(
+            ],
+            'attributes' => [
                 'id' => 'username',
-                'type' => 'text',
-            ),
-        ));
+            ],
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'email',
-            'options' => array(
+            'type' => Text::class,
+            'options' => [
                 'label' => 'Email',
-            ),
-            'attributes' => array(
+            ],
+            'attributes' => [
                 'id' => 'email',
-                'type' => 'text',
-            ),
-        ));
+            ],
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'display_name',
-            'options' => array(
+            'type' => Text::class,
+            'options' => [
                 'label' => 'Display Name',
-            ),
-            'attributes' => array(
+            ],
+            'attributes' => [
                 'id' => 'display_name',
-                'type' => 'text',
-            ),
-        ));
+            ],
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'password',
-            'type' => 'password',
-            'options' => array(
+            'type' => Password::class,
+            'options' => [
                 'label' => 'Password',
-            ),
-            'attributes' => array(
+            ],
+            'attributes' => [
                 'id' => 'password',
-                'type' => 'password',
-            ),
-        ));
+            ],
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'passwordVerify',
-            'type' => 'password',
-            'options' => array(
+            'type' => Password::class,
+            'options' => [
                 'label' => 'Password Verify',
-            ),
-            'attributes' => array(
+            ],
+            'attributes' => [
                 'id' => 'passwordVerify',
-                'type' => 'password',
-            ),
-        ));
+            ],
+        ]);
 
-        $submitElement = new Element\Button('submit');
+        $submitElement = new Button('submit');
         $submitElement
             ->setLabel('Submit')
-            ->setAttributes(array(
+            ->setAttributes([
                 'type'  => 'submit',
-            ));
+            ]);
 
-        $this->add($submitElement, array(
+        $this->add($submitElement, [
             'priority' => -100,
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'userId',
-            'type' => 'Laminas\Form\Element\Hidden',
-            'attributes' => array(
-                'type' => 'hidden'
-            ),
-        ));
-
-        // @TODO: Fix this... getValidator() is a protected method.
-        //$csrf = new Element\Csrf('csrf');
-        //$csrf->getValidator()->setTimeout($this->getRegistrationOptions()->getUserFormTimeout());
-        //$this->add($csrf);
-    }
-
-    public function init()
-    {
+            'type' => Hidden::class,
+        ]);
     }
 }

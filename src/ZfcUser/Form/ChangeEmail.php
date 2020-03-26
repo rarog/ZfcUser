@@ -2,6 +2,11 @@
 
 namespace ZfcUser\Form;
 
+use Laminas\Form\Element\Csrf;
+use Laminas\Form\Element\Hidden;
+use Laminas\Form\Element\Password;
+use Laminas\Form\Element\Submit;
+use Laminas\Form\Element\Text;
 use ZfcUser\Options\AuthenticationOptionsInterface;
 
 class ChangeEmail extends ProvidesEventsForm
@@ -17,58 +22,67 @@ class ChangeEmail extends ProvidesEventsForm
 
         parent::__construct($name);
 
-        $this->add(array(
+        $this->add([
             'name' => 'identity',
-            'options' => array(
+            'type' => Hidden::class,
+            'options' => [
                 'label' => '',
-            ),
-            'attributes' => array(
+            ],
+            'attributes' => [
                 'id' => 'identity',
-                'type' => 'hidden',
-            ),
-        ));
+            ],
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'newIdentity',
-            'options' => array(
+            'type' => Text::class,
+            'options' => [
                 'label' => 'New Email',
-            ),
-            'attributes' => array(
+            ],
+            'attributes' => [
                 'id' => 'newIdentity',
-                'type' => 'text',
-            ),
-        ));
+            ],
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'newIdentityVerify',
-            'options' => array(
+            'type' => Text::class,
+            'options' => [
                 'label' => 'Verify New Email',
-            ),
-            'attributes' => array(
+            ],
+            'attributes' => [
                 'id' => 'newIdentityVerify',
-                'type' => 'text',
-            ),
-        ));
+            ],
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'credential',
-            'type' => 'password',
-            'options' => array(
+            'type' => Password::class,
+            'options' => [
                 'label' => 'Password',
-            ),
-            'attributes' => array(
+            ],
+            'attributes' => [
                 'id' => 'credential',
-                'type' => 'password',
-            ),
-        ));
+            ],
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'submit',
-            'attributes' => array(
+            'type' => Submit::class,
+            'attributes' => [
                 'value' => 'Submit',
-                'type'  => 'submit'
-            ),
-        ));
+            ],
+        ]);
+
+        $this->add([
+            'name' => 'csrf',
+            'type' => Csrf::class,
+            'options' => [
+                'csrf_options' => [
+                    'timeout' => $this->getAuthenticationOptions()->getLoginFormTimeout(),
+                ],
+            ],
+        ]);
     }
 
     /**

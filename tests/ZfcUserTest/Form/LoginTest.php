@@ -26,6 +26,7 @@ class LoginTest extends TestCase
 
         $this->assertArrayHasKey('identity', $elements);
         $this->assertArrayHasKey('credential', $elements);
+        $this->assertArrayHasKey('csrf', $elements);
 
         $expectedLabel = '';
         if (count($authIdentityFields) > 0) {
