@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="phpunit.xsd"
-         bootstrap="./tests/bootstrap.php"
          colors="true"
          convertDeprecationsToExceptions="true"
          convertErrorsToExceptions="true"
@@ -12,30 +11,33 @@
          processIsolation="false"
          backupGlobals="false"
 >
-    <testsuite name="ZfcUser Test Suite">
-        <directory>./tests/ZfcUserTest</directory>
-    </testsuite>
+    <testsuites>
+        <testsuite name="ZfcUser">
+            <directory>./module/ZfcUser/test</directory>
+        </testsuite>
+    </testsuites>
     
     <php>
         <const name="DB_MYSQL_DSN" value="mysql:host=localhost;dbname=zfc_user" />
         <const name="DB_MYSQL_USERNAME" value="root" />
         <const name="DB_MYSQL_PASSWORD" value="" />
-        <const name="DB_MYSQL_SCHEMA" value="../data/schema.mysql.sql" />
+        <const name="DB_MYSQL_SCHEMA" value="data/schema.mysql.sql" />
         
         <const name="DB_SQLITE_DSN" value="sqlite::memory:" />
         <const name="DB_SQLITE_USERNAME" value="" />
         <const name="DB_SQLITE_PASSWORD" value="" />
-        <const name="DB_SQLITE_SCHEMA" value="../data/schema.sqlite.sql" />
+        <const name="DB_SQLITE_SCHEMA" value="data/schema.sqlite.sql" />
     </php>
 
     <filter>
         <whitelist>
-            <directory suffix=".php">./src</directory>
+			<directory suffix=".php">./module/ZfcUser/src</directory>
         </whitelist>
     </filter>
     
     <logging>
         <log type="coverage-text" target="php://stdout"/>
+        <log type="coverage-html" target="build/logs/coverage" lowUpperBound="35" highLowerBound="70"/>
         <log type="coverage-clover" target="build/logs/clover.xml"/>
     </logging>
 </phpunit>

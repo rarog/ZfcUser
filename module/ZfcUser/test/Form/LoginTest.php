@@ -13,7 +13,7 @@ class LoginTest extends TestCase
      * @covers ZfcUser\Form\Login::__construct
      * @dataProvider providerTestConstruct
      */
-    public function testConstruct(array $authIdentityFields = [], bool $useCaptcha): void
+    public function testConstruct(array $authIdentityFields, bool $useCaptcha): void
     {
         $options = $this->getMockBuilder(AuthenticationOptionsInterface::class)
             ->getMock();

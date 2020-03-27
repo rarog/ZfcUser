@@ -5,8 +5,8 @@
 	"license" : "BSD-3-Clause",
 	"keywords" : [
 		"laminas",
-                "user",
-                "authentication"
+		"user",
+		"authentication"
 	],
 	"homepage" : "https://github.com/rarog/laminas-user",
 	"authors" : [{
@@ -55,12 +55,14 @@
 		"laminas/laminas-captcha" : "Laminas\\Captcha if you want to use the captcha component"
 	},
 	"autoload" : {
-		"psr-0" : {
-			"ZfcUser" : "src/"
-		},
-		"classmap" : [
-			"./Module.php"
-		]
+		"psr-4" : {
+			"ZfcUser\\" : "module/ZfcUser/src"
+		}
+	},
+	"autoload-dev" : {
+		"psr-4" : {
+			"ZfcUserTest\\" : "module/ZfcUser/test"
+		}
 	},
 	"scripts" : {
 		"cs-check" : "phpcs",

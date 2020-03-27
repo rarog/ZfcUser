@@ -11,8 +11,8 @@ before_script:
   - mysql -e "create database IF NOT EXISTS zfc_user;" -uroot
 
 script:
-  - ./vendor/bin/phpunit --bootstrap=tests/bootstrap.php
-  - ./vendor/bin/phpcs -n --standard=PSR2 ./src/ ./tests/
+  - ./vendor/bin/phpunit
+  - ./vendor/bin/phpcs -n --standard=PSR2 ./module/ZfcUser/src/ ./module/ZfcUser/test/
 
 after_script:
   - php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
