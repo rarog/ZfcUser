@@ -15,7 +15,7 @@ before_script:
 
 script:
   - ./vendor/bin/phpunit
-  - ./vendor/bin/phpcs -n --standard=PSR2 ./module/ZfcUser/src/ ./module/ZfcUser/test/
+  - ./vendor/bin/phpcs
 
 after_script:
   - php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
