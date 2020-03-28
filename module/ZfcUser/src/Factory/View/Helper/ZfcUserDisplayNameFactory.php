@@ -4,13 +4,17 @@ namespace ZfcUser\Factory\View\Helper;
 
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use ZfcUser\View;
+use ZfcUser\View\Helper\ZfcUserDisplayName;
 
-class ZfcUserDisplayName implements FactoryInterface
+class ZfcUserDisplayNameFactory implements FactoryInterface
 {
+    /**
+     * {@inheritDoc}
+     * @see \Laminas\ServiceManager\Factory\FactoryInterface::__invoke()
+     */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $viewHelper = new View\Helper\ZfcUserDisplayName;
+        $viewHelper = new ZfcUserDisplayName();
         $viewHelper->setAuthService($container->get('zfcuser_auth_service'));
 
         return $viewHelper;

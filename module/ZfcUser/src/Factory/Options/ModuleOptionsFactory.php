@@ -1,12 +1,12 @@
 <?php
 
-namespace ZfcUser\Factory\Service;
+namespace ZfcUser\Factory\Options;
 
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use ZfcUser\Service\User;
+use ZfcUser\Options\ModuleOptions;
 
-class UserFactory implements FactoryInterface
+class ModuleOptionsFactory implements FactoryInterface
 {
     /**
      * {@inheritDoc}
@@ -14,9 +14,8 @@ class UserFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $serviceLocator, $requestedName, array $options = null)
     {
-        $service = new User();
-        $service->setServiceManager($serviceLocator);
+        $config = $serviceLocator->get('Config');
 
-        return $service;
+        return new ModuleOptions(isset($config['zfcuser']) ? $config['zfcuser'] : []);
     }
 }

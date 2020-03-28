@@ -4,12 +4,16 @@ namespace ZfcUser\Factory\Mapper;
 
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use Laminas\ServiceManager\ServiceLocatorInterface;
-use ZfcUser\Mapper;
+use ZfcUser\Mapper\User;
+use ZfcUser\Mapper\UserHydrator;
 use ZfcUser\Options\ModuleOptions;
 
-class User implements FactoryInterface
+class UserFactory implements FactoryInterface
 {
+    /**
+     * {@inheritDoc}
+     * @see \Laminas\ServiceManager\Factory\FactoryInterface::__invoke()
+     */
     public function __invoke(ContainerInterface $serviceLocator, $requestedName, array $options = null)
     {
         /** @var ModuleOptions $options */
@@ -19,23 +23,12 @@ class User implements FactoryInterface
         $entityClass = $options->getUserEntityClass();
         $tableName = $options->getTableName();
 
-        $mapper = new Mapper\User();
+        $mapper = new User();
         $mapper->setDbAdapter($dbAdapter);
         $mapper->setTableName($tableName);
-        $mapper->setEntityPrototype(new $entityClass);
-        $mapper->setHydrator(new Mapper\UserHydrator());
+        $mapper->setEntityPrototype(new $entityClass());
+        $mapper->setHydrator(new UserHydrator());
 
         return $mapper;
-    }
-
-    /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
-     */
-    public function createService(ServiceLocatorInterface $serviceLocator)
-    {
-        return $this->__invoke($serviceLocator, null);
     }
 }

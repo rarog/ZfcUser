@@ -4,7 +4,7 @@ namespace ZfcUserTest\Factory\Form;
 
 use Laminas\Form\FormElementManager;
 use Laminas\ServiceManager\ServiceManager;
-use ZfcUser\Factory\Form\Login as LoginFactory;
+use ZfcUser\Factory\Form\LoginFactory;
 use ZfcUser\Options\ModuleOptions;
 use PHPUnit\Framework\TestCase;
 use ZfcUser\Form\Login;

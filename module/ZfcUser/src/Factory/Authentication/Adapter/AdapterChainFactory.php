@@ -3,7 +3,6 @@
 namespace ZfcUser\Factory\Authentication\Adapter;
 
 use Interop\Container\ContainerInterface;
-use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use ZfcUser\Authentication\Adapter\AdapterChain;
 use ZfcUser\Authentication\Adapter\Exception\OptionsNotFoundException;
@@ -58,7 +57,7 @@ class AdapterChainFactory implements FactoryInterface
     /**
      * get options
      *
-     * @param ServiceLocatorInterface $serviceLocator (optional) Service Locator
+     * @param ContainerInterface $serviceLocator (optional) Service Locator
      * @return ModuleOptions $options
      * @throws OptionsNotFoundException If options tried to retrieve without being set but no SL was provided
      */

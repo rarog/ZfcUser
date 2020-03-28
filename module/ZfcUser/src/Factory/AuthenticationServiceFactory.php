@@ -1,12 +1,14 @@
 <?php
 
-namespace ZfcUser\Factory\Authentication\Storage;
+namespace ZfcUser\Factory;
 
 use Interop\Container\ContainerInterface;
+use Laminas\Authentication\AuthenticationService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use ZfcUser\Authentication\Adapter\AdapterChain;
 use ZfcUser\Authentication\Storage\Db;
 
-class DbFactory implements FactoryInterface
+class AuthenticationServiceFactory implements FactoryInterface
 {
     /**
      * {@inheritDoc}
@@ -14,9 +16,9 @@ class DbFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $serviceLocator, $requestedName, array $options = null)
     {
-        $db = new Db();
-        $db->setServiceManager($serviceLocator);
-
-        return $db;
+        return new AuthenticationService(
+            $serviceLocator->get(Db::class),
+            $serviceLocator->get(AdapterChain::class)
+        );
     }
 }

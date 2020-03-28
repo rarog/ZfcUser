@@ -12,24 +12,24 @@ use Laminas\ModuleManager\Feature\ViewHelperProviderInterface;
 use ZfcUser\Authentication\Adapter\AdapterChain;
 use ZfcUser\Authentication\Adapter\Db as AdapterDb;
 use ZfcUser\Authentication\Storage\Db as StorageDb;
-use ZfcUser\Factory\AuthenticationService;
-use ZfcUser\Factory\UserHydrator;
+use ZfcUser\Factory\AuthenticationServiceFactory;
+use ZfcUser\Factory\UserHydratorFactory;
 use ZfcUser\Factory\Authentication\Adapter\AdapterChainFactory;
 use ZfcUser\Factory\Authentication\Adapter\DbFactory as AdapterDbFactory;
 use ZfcUser\Factory\Authentication\Storage\DbFactory as StorageDbFactory;
 use ZfcUser\Factory\Controller\RedirectCallbackFactory;
 use ZfcUser\Factory\Controller\UserControllerFactory;
-use ZfcUser\Factory\Controller\Plugin\ZfcUserAuthentication;
-use ZfcUser\Factory\Form\ChangeEmail;
-use ZfcUser\Factory\Form\ChangePassword;
-use ZfcUser\Factory\Form\Login;
-use ZfcUser\Factory\Form\Register;
-use ZfcUser\Factory\Mapper\User;
-use ZfcUser\Factory\Options\ModuleOptions;
-use ZfcUser\Factory\Service\UserFactory;
-use ZfcUser\Factory\View\Helper\ZfcUserDisplayName;
-use ZfcUser\Factory\View\Helper\ZfcUserIdentity;
-use ZfcUser\Factory\View\Helper\ZfcUserLoginWidget;
+use ZfcUser\Factory\Controller\Plugin\ZfcUserAuthenticationFactory;
+use ZfcUser\Factory\Form\ChangeEmailFactory;
+use ZfcUser\Factory\Form\ChangePasswordFactory;
+use ZfcUser\Factory\Form\LoginFactory;
+use ZfcUser\Factory\Form\RegisterFactory;
+use ZfcUser\Factory\Mapper\UserFactory as MapperUserFactory;
+use ZfcUser\Factory\Options\ModuleOptionsFactory;
+use ZfcUser\Factory\Service\UserFactory as ServiceUserFactory;
+use ZfcUser\Factory\View\Helper\ZfcUserDisplayNameFactory;
+use ZfcUser\Factory\View\Helper\ZfcUserIdentityFactory;
+use ZfcUser\Factory\View\Helper\ZfcUserLoginWidgetFactory;
 
 class Module implements
     ControllerProviderInterface,
@@ -55,7 +55,7 @@ class Module implements
     {
         return [
             'factories' => [
-                'zfcUserAuthentication' => ZfcUserAuthentication::class,
+                'zfcUserAuthentication' => ZfcUserAuthenticationFactory::class,
             ],
         ];
     }
@@ -81,9 +81,9 @@ class Module implements
     {
         return [
             'factories' => [
-                'zfcUserDisplayName' => ZfcUserDisplayName::class,
-                'zfcUserIdentity' => ZfcUserIdentity::class,
-                'zfcUserLoginWidget' => ZfcUserLoginWidget::class,
+                'zfcUserDisplayName' => ZfcUserDisplayNameFactory::class,
+                'zfcUserIdentity' => ZfcUserIdentityFactory::class,
+                'zfcUserLoginWidget' => ZfcUserLoginWidgetFactory::class,
             ],
         ];
     }
@@ -103,26 +103,26 @@ class Module implements
             ],
             'factories' => [
                 'zfcuser_redirect_callback' => RedirectCallbackFactory::class,
-                'zfcuser_module_options' => ModuleOptions::class,
+                'zfcuser_module_options' => ModuleOptionsFactory::class,
                 AdapterChain::class => AdapterChainFactory::class,
 
                 // We alias this one because it's ZfcUser's instance of
                 // Laminas\Authentication\AuthenticationService. We don't want to
                 // hog the FQCN service alias for a Laminas\* class.
-                'zfcuser_auth_service' => AuthenticationService::class,
+                'zfcuser_auth_service' => AuthenticationServiceFactory::class,
 
-                'zfcuser_user_hydrator' => UserHydrator::class,
-                'zfcuser_user_mapper' => User::class,
+                'zfcuser_user_hydrator' => UserHydratorFactory::class,
+                'zfcuser_user_mapper' => MapperUserFactory::class,
 
-                'zfcuser_login_form' => Login::class,
-                'zfcuser_register_form' => Register::class,
-                'zfcuser_change_password_form' => ChangePassword::class,
-                'zfcuser_change_email_form' => ChangeEmail::class,
+                'zfcuser_login_form' => LoginFactory::class,
+                'zfcuser_register_form' => RegisterFactory::class,
+                'zfcuser_change_password_form' => ChangePasswordFactory::class,
+                'zfcuser_change_email_form' => ChangeEmailFactory::class,
 
                 AdapterDb::class => AdapterDbFactory::class,
                 StorageDb::class => StorageDbFactory::class,
 
-                'zfcuser_user_service' => UserFactory::class,
+                'zfcuser_user_service' => ServiceUserFactory::class,
             ],
         ];
     }

@@ -3,14 +3,16 @@
 namespace ZfcUser\Factory\Controller;
 
 use Interop\Container\ContainerInterface;
-use Laminas\Mvc\Controller\ControllerManager;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use Laminas\ServiceManager\ServiceLocatorInterface;
 use ZfcUser\Controller\RedirectCallback;
 use ZfcUser\Controller\UserController;
 
 class UserControllerFactory implements FactoryInterface
 {
+    /**
+     * {@inheritDoc}
+     * @see \Laminas\ServiceManager\Factory\FactoryInterface::__invoke()
+     */
     public function __invoke(ContainerInterface $serviceManager, $requestedName, array $options = null)
     {
         /* @var RedirectCallback $redirectCallback */
@@ -28,19 +30,5 @@ class UserControllerFactory implements FactoryInterface
         $controller->setUserService($serviceManager->get('zfcuser_user_service'));
 
         return $controller;
-    }
-
-    /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $controllerManager
-     * @return mixed
-     */
-    public function createService(ServiceLocatorInterface $controllerManager)
-    {
-        /* @var ControllerManager $controllerManager*/
-        $serviceManager = $controllerManager->getServiceLocator();
-
-        return $this->__invoke($serviceManager, null);
     }
 }
