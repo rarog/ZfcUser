@@ -1,4 +1,5 @@
 <?php
+
 namespace ZfcUser\InputFilter;
 
 use Laminas\EventManager\EventManagerAwareTrait;

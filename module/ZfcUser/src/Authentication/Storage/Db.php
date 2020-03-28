@@ -96,7 +96,8 @@ class Db implements Storage\StorageInterface
     /**
      * Clears contents from storage
      *
-     * @throws \Laminas\Authentication\Exception\InvalidArgumentException If clearing contents from storage is impossible
+     * @throws \Laminas\Authentication\Exception\InvalidArgumentException If clearing contents from storage is
+     * impossible
      * @return void
      */
     public function clear()
@@ -113,7 +114,7 @@ class Db implements Storage\StorageInterface
     public function getStorage()
     {
         if (null === $this->storage) {
-            $this->setStorage(new Storage\Session);
+            $this->setStorage(new Storage\Session());
         }
         return $this->storage;
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace ZfcUser\Mapper;
 
 use Laminas\Db\Adapter\Adapter;
@@ -76,13 +77,13 @@ abstract class AbstractDbMapper extends EventProvider
         if ($this->isInitialized) {
             return;
         }
-        if (!$this->dbAdapter instanceof Adapter) {
+        if (! $this->dbAdapter instanceof Adapter) {
             throw new \Exception('No db adapter present');
         }
-        if (!$this->hydrator instanceof HydratorInterface) {
+        if (! $this->hydrator instanceof HydratorInterface) {
             $this->hydrator = new ClassMethodsHydrator();
         }
-        if (!is_object($this->entityPrototype)) {
+        if (! is_object($this->entityPrototype)) {
             throw new \Exception('No entity prototype set');
         }
 
@@ -106,8 +107,11 @@ abstract class AbstractDbMapper extends EventProvider
      * @param HydratorInterface|null $hydrator
      * @return HydratingResultSet
      */
-    protected function select(Select $select, UserEntityInterface $entityPrototype = null, HydratorInterface $hydrator = null)
-    {
+    protected function select(
+        Select $select,
+        UserEntityInterface $entityPrototype = null,
+        HydratorInterface $hydrator = null
+    ) {
         $this->initialize();
         $stmt = $this->getSlaveSql()->prepareStatementForSqlObject($select);
         $resultSet = new HydratingResultSet(
@@ -143,8 +147,12 @@ abstract class AbstractDbMapper extends EventProvider
      * @param HydratorInterface|null $hydrator
      * @return ResultInterface
      */
-    protected function update(UserEntityInterface $entity, $where, $tableName = null, HydratorInterface $hydrator = null)
-    {
+    protected function update(
+        UserEntityInterface $entity,
+        $where,
+        $tableName = null,
+        HydratorInterface $hydrator = null
+    ) {
         $this->initialize();
         $tableName = $tableName ?: $this->tableName;
         $sql = $this->getSql()->setTable($tableName);
@@ -242,7 +250,7 @@ abstract class AbstractDbMapper extends EventProvider
      */
     public function getHydrator()
     {
-        if (!$this->hydrator) {
+        if (! $this->hydrator) {
             $this->hydrator = new ClassMethods(false);
         }
         return $this->hydrator;
@@ -264,7 +272,7 @@ abstract class AbstractDbMapper extends EventProvider
      */
     protected function getSql()
     {
-        if (!$this->sql instanceof Sql) {
+        if (! $this->sql instanceof Sql) {
             $this->sql = new Sql($this->getDbAdapter());
         }
         return $this->sql;
@@ -285,7 +293,7 @@ abstract class AbstractDbMapper extends EventProvider
      */
     protected function getSlaveSql()
     {
-        if (!$this->slaveSql instanceof Sql) {
+        if (! $this->slaveSql instanceof Sql) {
             $this->slaveSql = new Sql($this->getDbSlaveAdapter());
         }
         return $this->slaveSql;
@@ -312,7 +320,7 @@ abstract class AbstractDbMapper extends EventProvider
      */
     protected function entityToArray(UserEntityInterface $entity, HydratorInterface $hydrator = null)
     {
-        if (!$hydrator) {
+        if (! $hydrator) {
             $hydrator = $this->getHydrator();
         }
 

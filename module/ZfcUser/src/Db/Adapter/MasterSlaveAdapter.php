@@ -1,9 +1,11 @@
 <?php
+
 namespace ZfcBase\Db\Adapter;
 
 use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\Platform;
-use Laminas\Db\ResultSet;
+use Laminas\Db\Adapter\Platform\PlatformInterface;
+use Laminas\Db\ResultSet\ResultSetInterface;
+use ZfcUser\Db\Adapter\MasterSlaveAdapterInterface;
 
 class MasterSlaveAdapter extends Adapter implements MasterSlaveAdapterInterface
 {
@@ -15,15 +17,15 @@ class MasterSlaveAdapter extends Adapter implements MasterSlaveAdapterInterface
     protected $slaveAdapter;
     /**
      * @param Adapter $slaveAdapter
-     * @param Driver\DriverInterface|array $driver
-     * @param Platform\PlatformInterface $platform
-     * @param ResultSet\ResultSet $queryResultPrototype
+     * @param \Laminas\Db\Adapter\Driver\DriverInterface|array $driver
+     * @param PlatformInterface $platform
+     * @param ResultSetInterface $queryResultPrototype
      */
     public function __construct(
         Adapter $slaveAdapter,
         $driver,
-        Platform\PlatformInterface $platform = null,
-        ResultSet\ResultSetInterface $queryResultPrototype = null
+        PlatformInterface $platform = null,
+        ResultSetInterface $queryResultPrototype = null
     ) {
         $this->slaveAdapter = $slaveAdapter;
         parent::__construct($driver, $platform, $queryResultPrototype);

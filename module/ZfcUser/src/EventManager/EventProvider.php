@@ -1,11 +1,11 @@
 <?php
+
 namespace ZfcUser\EventManager;
 
-use Traversable;
+use Laminas\EventManager\EventManager;
 use Laminas\EventManager\EventManagerAwareInterface;
 use Laminas\EventManager\EventManagerInterface;
-use Laminas\EventManager\EventManager;
-use Laminas\EventManager\SharedEventManager;
+use Traversable;
 
 abstract class EventProvider implements EventManagerAwareInterface
 {
@@ -13,6 +13,7 @@ abstract class EventProvider implements EventManagerAwareInterface
      * @var EventManagerInterface
      */
     protected $events;
+
     /**
      * Set the event manager instance used by this context
      *
@@ -21,11 +22,12 @@ abstract class EventProvider implements EventManagerAwareInterface
      */
     public function setEventManager(EventManagerInterface $events)
     {
-        $identifiers = array(__CLASS__, get_called_class());
+        $identifiers = [__CLASS__, get_called_class()];
         if (isset($this->eventIdentifier)) {
-            if ((is_string($this->eventIdentifier))
-                || (is_array($this->eventIdentifier))
-                || ($this->eventIdentifier instanceof Traversable)
+            if (
+                (is_string($this->eventIdentifier)) ||
+                (is_array($this->eventIdentifier)) ||
+                ($this->eventIdentifier instanceof Traversable)
             ) {
                 $identifiers = array_unique(array_merge($identifiers, (array) $this->eventIdentifier));
             } elseif (is_object($this->eventIdentifier)) {
@@ -46,7 +48,7 @@ abstract class EventProvider implements EventManagerAwareInterface
      */
     public function getEventManager()
     {
-        if (!$this->events instanceof EventManagerInterface) {
+        if (! $this->events instanceof EventManagerInterface) {
             $this->setEventManager(new EventManager());
         }
         return $this->events;

@@ -10,16 +10,16 @@ abstract class AbstractRecord extends AbstractValidator
     /**
      * Error constants
      */
-    const ERROR_NO_RECORD_FOUND = 'noRecordFound';
-    const ERROR_RECORD_FOUND    = 'recordFound';
+    public const ERROR_NO_RECORD_FOUND = 'noRecordFound';
+    public const ERROR_RECORD_FOUND    = 'recordFound';
 
     /**
      * @var array Message templates
      */
-    protected $messageTemplates = array(
-        self::ERROR_NO_RECORD_FOUND => "No record matching the input was found",
-        self::ERROR_RECORD_FOUND    => "A record matching the input was found",
-    );
+    protected $messageTemplates = [
+        self::ERROR_NO_RECORD_FOUND => 'No record matching the input was found',
+        self::ERROR_RECORD_FOUND    => 'A record matching the input was found',
+    ];
 
     /**
      * @var UserInterface
@@ -37,7 +37,7 @@ abstract class AbstractRecord extends AbstractValidator
      */
     public function __construct(array $options)
     {
-        if (!array_key_exists('key', $options)) {
+        if (! array_key_exists('key', $options)) {
             throw new Exception\InvalidArgumentException('No key provided');
         }
 

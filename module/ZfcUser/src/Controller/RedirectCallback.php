@@ -77,7 +77,7 @@ class RedirectCallback
     private function routeExists($route)
     {
         try {
-            $this->router->assemble(array(), array('name' => $route));
+            $this->router->assemble([], ['name' => $route]);
         } catch (Exception\RuntimeException $e) {
             return false;
         }
@@ -96,7 +96,7 @@ class RedirectCallback
     {
         $useRedirect = $this->options->getUseRedirectParameterIfPresent();
         $routeExists = ($redirect && $this->routeExists($redirect));
-        if (!$useRedirect || !$routeExists) {
+        if (! $useRedirect || ! $routeExists) {
             $redirect = false;
         }
 
@@ -105,14 +105,14 @@ class RedirectCallback
             case 'zfcuser/login':
             case 'zfcuser/authenticate':
                 $route = ($redirect) ?: $this->options->getLoginRedirectRoute();
-                return $this->router->assemble(array(), array('name' => $route));
+                return $this->router->assemble([], ['name' => $route]);
                 break;
             case 'zfcuser/logout':
                 $route = ($redirect) ?: $this->options->getLogoutRedirectRoute();
-                return $this->router->assemble(array(), array('name' => $route));
+                return $this->router->assemble([], ['name' => $route]);
                 break;
             default:
-                return $this->router->assemble(array(), array('name' => 'zfcuser'));
+                return $this->router->assemble([], ['name' => 'zfcuser']);
         }
     }
 }

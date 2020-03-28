@@ -65,19 +65,19 @@ class User extends EventProvider
     public function register(array $data)
     {
         $class = $this->getOptions()->getUserEntityClass();
-        $user  = new $class;
-        $form  = $this->getRegisterForm();
+        $user = new $class();
+        $form = $this->getRegisterForm();
         $form->setHydrator($this->getFormHydrator());
         $form->bind($user);
         $form->setData($data);
-        if (!$form->isValid()) {
+        if (! $form->isValid()) {
             return false;
         }
 
         $user = $form->getData();
         /* @var $user \ZfcUser\Model\UserInterface */
 
-        $bcrypt = new Bcrypt;
+        $bcrypt = new Bcrypt();
         $bcrypt->setCost($this->getOptions()->getPasswordCost());
         $user->setPassword($bcrypt->create($user->getPassword()));
 
@@ -92,9 +92,9 @@ class User extends EventProvider
         if ($this->getOptions()->getEnableUserState()) {
             $user->setState($this->getOptions()->getDefaultUserState());
         }
-        $this->getEventManager()->trigger(__FUNCTION__, $this, array('user' => $user, 'form' => $form));
+        $this->getEventManager()->trigger(__FUNCTION__, $this, ['user' => $user, 'form' => $form]);
         $this->getUserMapper()->insert($user);
-        $this->getEventManager()->trigger(__FUNCTION__.'.post', $this, array('user' => $user, 'form' => $form));
+        $this->getEventManager()->trigger(__FUNCTION__ . '.post', $this, ['user' => $user, 'form' => $form]);
         return $user;
     }
 
@@ -111,19 +111,19 @@ class User extends EventProvider
         $oldPass = $data['credential'];
         $newPass = $data['newCredential'];
 
-        $bcrypt = new Bcrypt;
+        $bcrypt = new Bcrypt();
         $bcrypt->setCost($this->getOptions()->getPasswordCost());
 
-        if (!$bcrypt->verify($oldPass, $currentUser->getPassword())) {
+        if (! $bcrypt->verify($oldPass, $currentUser->getPassword())) {
             return false;
         }
 
         $pass = $bcrypt->create($newPass);
         $currentUser->setPassword($pass);
 
-        $this->getEventManager()->trigger(__FUNCTION__, $this, array('user' => $currentUser, 'data' => $data));
+        $this->getEventManager()->trigger(__FUNCTION__, $this, ['user' => $currentUser, 'data' => $data]);
         $this->getUserMapper()->update($currentUser);
-        $this->getEventManager()->trigger(__FUNCTION__.'.post', $this, array('user' => $currentUser, 'data' => $data));
+        $this->getEventManager()->trigger(__FUNCTION__ . '.post', $this, ['user' => $currentUser, 'data' => $data]);
 
         return true;
     }
@@ -132,18 +132,18 @@ class User extends EventProvider
     {
         $currentUser = $this->getAuthService()->getIdentity();
 
-        $bcrypt = new Bcrypt;
+        $bcrypt = new Bcrypt();
         $bcrypt->setCost($this->getOptions()->getPasswordCost());
 
-        if (!$bcrypt->verify($data['credential'], $currentUser->getPassword())) {
+        if (! $bcrypt->verify($data['credential'], $currentUser->getPassword())) {
             return false;
         }
 
         $currentUser->setEmail($data['newIdentity']);
 
-        $this->getEventManager()->trigger(__FUNCTION__, $this, array('user' => $currentUser, 'data' => $data));
+        $this->getEventManager()->trigger(__FUNCTION__, $this, ['user' => $currentUser, 'data' => $data]);
         $this->getUserMapper()->update($currentUser);
-        $this->getEventManager()->trigger(__FUNCTION__.'.post', $this, array('user' => $currentUser, 'data' => $data));
+        $this->getEventManager()->trigger(__FUNCTION__ . '.post', $this, ['user' => $currentUser, 'data' => $data]);
 
         return true;
     }
@@ -247,7 +247,7 @@ class User extends EventProvider
      */
     public function getOptions()
     {
-        if (!$this->options instanceof UserServiceOptionsInterface) {
+        if (! $this->options instanceof UserServiceOptionsInterface) {
             $this->setOptions($this->getServiceManager()->get('zfcuser_module_options'));
         }
         return $this->options;
@@ -292,7 +292,7 @@ class User extends EventProvider
      */
     public function getFormHydrator()
     {
-        if (!$this->formHydrator instanceof Hydrator\HydratorInterface) {
+        if (! $this->formHydrator instanceof Hydrator\HydratorInterface) {
             $this->setFormHydrator($this->getServiceManager()->get('zfcuser_register_form_hydrator'));
         }
 

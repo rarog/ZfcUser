@@ -3,16 +3,13 @@
 namespace ZfcUser\Options;
 
 use Laminas\Stdlib\AbstractOptions;
+use ZfcUser\Model\User;
+use ZfcUser\Authentication\Adapter\Db;
 
 class ModuleOptions extends AbstractOptions implements
     UserControllerOptionsInterface,
     UserServiceOptionsInterface
 {
-    /**
-     * Turn off strict options mode
-     */
-    protected $__strictMode__ = false;
-
     /**
      * @var bool
      */
@@ -56,22 +53,22 @@ class ModuleOptions extends AbstractOptions implements
     /**
      * @var Array
      */
-    protected $allowedLoginStates = array( null, 1 );
+    protected $allowedLoginStates = [null, 1];
 
     /**
      * @var array
      */
-    protected $authAdapters = array( 100 => 'ZfcUser\Authentication\Adapter\Db' );
+    protected $authAdapters = [100 => Db::class];
 
     /**
      * @var array
      */
-    protected $authIdentityFields = array( 'email' );
+    protected $authIdentityFields = ['email'];
 
     /**
      * @var string
      */
-    protected $userEntityClass = 'ZfcUser\Model\User';
+    protected $userEntityClass = User::class;
 
     /**
      * @var string
@@ -111,20 +108,19 @@ class ModuleOptions extends AbstractOptions implements
     /**
      * @var string
      */
-
     protected $tableName = 'user';
 
     /**
      * @var array
      */
-    protected $formCaptchaOptions = array(
+    protected $formCaptchaOptions = [
         'class'   => 'figlet',
-        'options' => array(
+        'options' => [
             'wordLen'    => 5,
             'expiration' => 300,
             'timeout'    => 300,
-        ),
-    );
+        ],
+    ];
 
     /**
      * set login redirect route
@@ -551,7 +547,7 @@ class ModuleOptions extends AbstractOptions implements
      */
     public function setTableName($tableName)
     {
-        $this->tableName=$tableName;
+        $this->tableName = $tableName;
     }
 
     /**

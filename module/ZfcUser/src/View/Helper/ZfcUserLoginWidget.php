@@ -3,8 +3,8 @@
 namespace ZfcUser\View\Helper;
 
 use Laminas\View\Helper\AbstractHelper;
-use ZfcUser\Form\Login as LoginForm;
 use Laminas\View\Model\ViewModel;
+use ZfcUser\Form\Login as LoginForm;
 
 class ZfcUserLoginWidget extends AbstractHelper
 {
@@ -18,6 +18,7 @@ class ZfcUserLoginWidget extends AbstractHelper
      * $var string template used for view
      */
     protected $viewTemplate;
+
     /**
      * __invoke
      *
@@ -25,7 +26,7 @@ class ZfcUserLoginWidget extends AbstractHelper
      * @param array $options array of options
      * @return string
      */
-    public function __invoke($options = array())
+    public function __invoke($options = [])
     {
         if (array_key_exists('render', $options)) {
             $render = $options['render'];
@@ -38,10 +39,10 @@ class ZfcUserLoginWidget extends AbstractHelper
             $redirect = false;
         }
 
-        $vm = new ViewModel(array(
+        $vm = new ViewModel([
             'loginForm' => $this->getLoginForm(),
             'redirect'  => $redirect,
-        ));
+        ]);
         $vm->setTemplate($this->viewTemplate);
         if ($render) {
             return $this->getView()->render($vm);

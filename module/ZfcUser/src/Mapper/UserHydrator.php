@@ -16,7 +16,7 @@ class UserHydrator extends ClassMethodsHydrator
      */
     public function extract(object $object): array
     {
-        if (!$object instanceof UserEntityInterface) {
+        if (! $object instanceof UserEntityInterface) {
             throw new Exception\InvalidArgumentException('$object must be an instance of ZfcUser\Model\UserInterface');
         }
 
@@ -41,7 +41,7 @@ class UserHydrator extends ClassMethodsHydrator
      */
     public function hydrate(array $data, $object)
     {
-        if (!$object instanceof UserEntityInterface) {
+        if (! $object instanceof UserEntityInterface) {
             throw new Exception\InvalidArgumentException('$object must be an instance of ZfcUser\Model\UserInterface');
         }
 

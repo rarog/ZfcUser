@@ -4,6 +4,10 @@ namespace ZfcUser\Validator;
 
 class NoRecordExists extends AbstractRecord
 {
+    /**
+     * {@inheritDoc}
+     * @see \Laminas\Validator\ValidatorInterface::isValid()
+     */
     public function isValid($value)
     {
         $valid = true;
