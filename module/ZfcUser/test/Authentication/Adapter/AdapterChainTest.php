@@ -55,14 +55,18 @@ class AdapterChainTest extends TestCase
     protected $request;
 
     /**
+     * Used when testing prepareForAuthentication.
+     *
+     * @var null|array
+     */
+    protected $setNameParams;
+
+    /**
      * {@inheritDoc}
      * @see \PHPUnit\Framework\TestCase::setUp()
      */
     protected function setUp(): void
     {
-        $this->event = null;
-        $this->request = null;
-
         $this->adapterChain = new AdapterChain();
 
         $this->sharedEventManager = $this->getMockBuilder(SharedEventManagerInterface::class)
@@ -75,6 +79,10 @@ class AdapterChainTest extends TestCase
         $this->eventManager->expects($this->any())->method('setIdentifiers');
 
         $this->adapterChain->setEventManager($this->eventManager);
+
+        $this->event = null;
+        $this->request = null;
+        $this->setNameParams = null;
     }
 
     /**
@@ -83,11 +91,12 @@ class AdapterChainTest extends TestCase
      */
     protected function tearDown(): void
     {
+        unset($this->setNameParams);
+        unset($this->event);
+        unset($this->request);
         unset($this->eventManager);
         unset($this->sharedEventManager);
         unset($this->adapterChain);
-        unset($this->request);
-        unset($this->event);
     }
 
     /**
@@ -165,7 +174,18 @@ class AdapterChainTest extends TestCase
 
         $this->event->expects($this->once())->method('setRequest')->with($this->request);
 
-        $this->eventManager->expects($this->at(0))->method('trigger')->with('authenticate.pre');
+        $setNameParams = [];
+        $this->setNameParams = &$setNameParams;
+        $this->event->expects($this->atLeastOnce())->method('setName')->with(
+            $this->callback(function ($name) use (&$setNameParams) {
+                $setNameParams[] = $name;
+                return true;
+            })
+        );
+
+        $this->eventManager->expects($this->atLeastOnce())
+            ->method('triggerEvent')
+            ->with($this->identicalTo($this->event));
 
         /**
          * @var $response \Laminas\EventManager\ResponseCollection
@@ -173,10 +193,10 @@ class AdapterChainTest extends TestCase
         $responses = $this->getMockBuilder(ResponseCollection::class)
             ->getMock();
 
-        $this->eventManager->expects($this->at(1))
-            ->method('trigger')
-            ->with('authenticate', $this->event)
-            ->will($this->returnCallback(function ($event, $target, $callback) use ($responses) {
+        $this->eventManager->expects($this->atLeastOnce())
+            ->method('triggerEventUntil')
+            ->with($this->isType('callable'), $this->event)
+            ->will($this->returnCallback(function ($callback) use ($responses) {
                 if (call_user_func($callback, $responses->last())) {
                     $responses->setStopped(true);
                 }
@@ -196,8 +216,8 @@ class AdapterChainTest extends TestCase
     public function identityProvider(): array
     {
         return [
-            [true, true],
-            [false, false],
+            [true, true, ['authenticate.pre', 'authenticate', 'authenticate.success']],
+            [false, false, ['authenticate.pre', 'authenticate', 'authenticate.fail']],
         ];
     }
 
@@ -210,7 +230,7 @@ class AdapterChainTest extends TestCase
      * @dataProvider identityProvider
      * @covers \ZfcUser\Authentication\Adapter\AdapterChain::prepareForAuthentication
      */
-    public function testPrepareForAuthentication($identity, $expected): void
+    public function testPrepareForAuthentication($identity, $expected, $expectedSetNameParams): void
     {
         $result = $this->setUpPrepareForAuthentication();
 
@@ -223,6 +243,7 @@ class AdapterChainTest extends TestCase
             $this->adapterChain->prepareForAuthentication($this->request),
             'Asserting prepareForAuthentication() returns true'
         );
+        $this->assertEquals($expectedSetNameParams, $this->setNameParams);
     }
 
     /**
@@ -342,12 +363,15 @@ class AdapterChainTest extends TestCase
      */
     public function testLogoutAdapters(): void
     {
-        $event = new AdapterChainEvent();
+        $event = $this->getMockBuilder(AdapterChainEvent::class)
+            ->getMock();
+
+        $event->expects($this->once())->method('setName')->with('logout');
 
         $this->eventManager
             ->expects($this->once())
-            ->method('trigger')
-            ->with('logout', $event);
+            ->method('triggerEvent')
+            ->with($event);
 
         $this->adapterChain->setEvent($event);
         $this->adapterChain->logoutAdapters();

@@ -2,16 +2,16 @@
 
 namespace ZfcUser\Authentication\Adapter;
 
-use Laminas\Authentication\Adapter\AdapterInterface;
 use Laminas\Authentication\Result as AuthenticationResult;
+use Laminas\Authentication\Adapter\AdapterInterface;
 use Laminas\EventManager\Event;
-use Laminas\EventManager\EventInterface;
+use Laminas\EventManager\EventManagerAwareInterface;
 use Laminas\EventManager\EventManagerAwareTrait;
 use Laminas\Stdlib\RequestInterface as Request;
 use Laminas\Stdlib\ResponseInterface as Response;
-use ZfcUser\Exception;
+use ZfcUser\Exception\AuthenticationEventException;
 
-class AdapterChain implements AdapterInterface
+class AdapterChain implements AdapterInterface, EventManagerAwareInterface
 {
     use EventManagerAwareTrait;
 
@@ -45,7 +45,7 @@ class AdapterChain implements AdapterInterface
      *
      * @param  Request $request
      * @return Response|bool
-     * @throws Exception\AuthenticationEventException
+     * @throws AuthenticationEventException
      */
     public function prepareForAuthentication(Request $request)
     {
@@ -65,7 +65,7 @@ class AdapterChain implements AdapterInterface
                 return $result->last();
             }
 
-            throw new Exception\AuthenticationEventException(
+            throw new AuthenticationEventException(
                 sprintf(
                     'Auth event was stopped without a response. Got "%s" instead',
                     is_object($result->last()) ? get_class($result->last()) : gettype($result->last())
@@ -127,7 +127,7 @@ class AdapterChain implements AdapterInterface
     public function getEvent()
     {
         if (null === $this->event) {
-            $this->setEvent(new AdapterChainEvent);
+            $this->setEvent(new AdapterChainEvent());
             $this->event->setTarget($this);
         }
 
@@ -144,7 +144,7 @@ class AdapterChain implements AdapterInterface
      */
     public function setEvent(Event $e)
     {
-        if (!$e instanceof AdapterChainEvent) {
+        if (! $e instanceof AdapterChainEvent) {
             $eventParams = $e->getParams();
             $e = new AdapterChainEvent();
             $e->setParams($eventParams);
