@@ -4,8 +4,8 @@ namespace ZfcUserTest\View\Helper;
 
 use Laminas\Authentication\AuthenticationService;
 use PHPUnit\Framework\TestCase;
-use ZfcUser\Entity\User;
 use ZfcUser\Exception\DomainException;
+use ZfcUser\Model\User;
 use ZfcUser\View\Helper\ZfcUserDisplayName as ViewHelper;
 use stdClass;
 

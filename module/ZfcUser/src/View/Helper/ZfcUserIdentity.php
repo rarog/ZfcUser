@@ -16,7 +16,7 @@ class ZfcUserIdentity extends AbstractHelper
      * __invoke
      *
      * @access public
-     * @return \ZfcUser\Entity\UserInterface
+     * @return \ZfcUser\Model\UserInterface
      */
     public function __invoke()
     {

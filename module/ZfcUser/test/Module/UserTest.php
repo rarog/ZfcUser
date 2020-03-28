@@ -1,9 +1,9 @@
 <?php
 
-namespace ZfcUserTest\Entity;
+namespace ZfcUserTest\MOdule;
 
 use PHPUnit\Framework\TestCase;
-use ZfcUser\Entity\User as Entity;
+use ZfcUser\Model\User;
 
 class UserTest extends TestCase
 {
@@ -15,7 +15,7 @@ class UserTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->user = new Entity();
+        $this->user = new User();
     }
 
     /**
@@ -28,8 +28,8 @@ class UserTest extends TestCase
     }
 
     /**
-     * @covers ZfcUser\Entity\User::setId
-     * @covers ZfcUser\Entity\User::getId
+     * @covers ZfcUser\Model\User::setId
+     * @covers ZfcUser\Model\User::getId
      */
     public function testSetGetId()
     {
@@ -38,8 +38,8 @@ class UserTest extends TestCase
     }
 
     /**
-     * @covers ZfcUser\Entity\User::setUsername
-     * @covers ZfcUser\Entity\User::getUsername
+     * @covers ZfcUser\Model\User::setUsername
+     * @covers ZfcUser\Model\User::getUsername
      */
     public function testSetGetUsername()
     {
@@ -48,8 +48,8 @@ class UserTest extends TestCase
     }
 
     /**
-     * @covers ZfcUser\Entity\User::setDisplayName
-     * @covers ZfcUser\Entity\User::getDisplayName
+     * @covers ZfcUser\Model\User::setDisplayName
+     * @covers ZfcUser\Model\User::getDisplayName
      */
     public function testSetGetDisplayName()
     {
@@ -58,8 +58,8 @@ class UserTest extends TestCase
     }
 
     /**
-     * @covers ZfcUser\Entity\User::setEmail
-     * @covers ZfcUser\Entity\User::getEmail
+     * @covers ZfcUser\Model\User::setEmail
+     * @covers ZfcUser\Model\User::getEmail
      */
     public function testSetGetEmail()
     {
@@ -68,8 +68,8 @@ class UserTest extends TestCase
     }
 
     /**
-     * @covers ZfcUser\Entity\User::setPassword
-     * @covers ZfcUser\Entity\User::getPassword
+     * @covers ZfcUser\Model\User::setPassword
+     * @covers ZfcUser\Model\User::getPassword
      */
     public function testSetGetPassword()
     {
@@ -78,8 +78,8 @@ class UserTest extends TestCase
     }
 
     /**
-     * @covers ZfcUser\Entity\User::setState
-     * @covers ZfcUser\Entity\User::getState
+     * @covers ZfcUser\Model\User::setState
+     * @covers ZfcUser\Model\User::getState
      */
     public function testSetGetState()
     {

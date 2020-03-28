@@ -7,9 +7,9 @@ use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 use ZfcUser\Authentication\Storage\Db;
-use ZfcUser\Entity\User;
 use ZfcUser\Mapper\User as UserMapper;
 use ZfcUser\Mapper\UserInterface;
+use ZfcUser\Model\User;
 use ReflectionClass;
 
 class DbTest extends TestCase

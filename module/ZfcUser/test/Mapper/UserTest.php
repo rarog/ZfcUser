@@ -11,7 +11,7 @@ use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Platform\Platform;
 use PHPUnit\Framework\TestCase;
-use ZfcUser\Entity\User as Entity;
+use ZfcUser\Model\User as Entity;
 use ZfcUser\Mapper\User as Mapper;
 use ZfcUser\Mapper\UserHydrator;
 use Exception;
@@ -169,7 +169,7 @@ class UserTest extends TestCase
      * @param array $eventListenerArray
      * @return array
      */
-    public function setUpMockMapperInsert(array $mapperMethods): void
+    /*public function setUpMockMapperInsert(array $mapperMethods): void
     {
         $this->mapper = $this->getMockBuilder(get_class($this->mapper), $mapperMethods)
             ->getMock();
@@ -188,7 +188,7 @@ class UserTest extends TestCase
                     break;
             }
         }
-    }
+    }*/
 
     /**
      *
@@ -197,17 +197,26 @@ class UserTest extends TestCase
      */
     public function &setUpMockedMapper($eventListenerArray, array $mapperMethods = []): array
     {
+        $this->mockedDbAdapter->expects($this->any())
+            ->method('select')
+            ->will($this->returnValue($this->mockedResultSet));
+
+        $reflectionClass = new \ReflectionClass(Mapper::class);
+        $reflectionProperty = $reflectionClass->getProperty('slaveSql');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($this->mapper, $this->mockedDbSql);
+
         $returnMockedParams = [];
 
-        $mapperMethods = count($mapperMethods)
+        /*$mapperMethods = count($mapperMethods)
             ? array_merge($mapperMethods, ['getSelect', 'select'])
-            : [/*'getSelect', 'select'*/];
+            : ['getSelect', 'select'];
 
         $this->setUpMockMapperInsert($mapperMethods);
 
         $this->mapper->expects($this->once())
             ->method('select')
-            ->will($this->returnValue($this->mockedResultSet));
+            ->will($this->returnValue($this->mockedResultSet));*/
 
         $mockedSelect = $this->mockedSelect;
         $this->mockedSelect->expects($this->once())

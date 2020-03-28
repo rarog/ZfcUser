@@ -351,7 +351,7 @@ class ModuleOptionsTest extends TestCase
      */
     public function testGetUserEntityClass()
     {
-        $this->assertEquals('ZfcUser\Entity\User', $this->options->getUserEntityClass());
+        $this->assertEquals('ZfcUser\Model\User', $this->options->getUserEntityClass());
     }
 
     /**

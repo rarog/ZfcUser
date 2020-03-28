@@ -11,7 +11,7 @@ use Laminas\Hydrator\ClassMethods;
 use Laminas\Hydrator\ClassMethodsHydrator;
 use Laminas\Hydrator\HydratorInterface;
 use ZfcUser\Db\Adapter\MasterSlaveAdapterInterface;
-use ZfcUser\Entity\UserInterface as UserEntityInterface;
+use ZfcUser\Model\UserInterface as UserEntityInterface;
 use ZfcUser\EventManager\EventProvider;
 
 abstract class AbstractDbMapper extends EventProvider

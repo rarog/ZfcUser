@@ -7,8 +7,8 @@ use Laminas\Authentication\Result as AuthenticationResult;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Crypt\Password\Bcrypt;
 use Laminas\Session\Container as SessionContainer;
-use ZfcUser\Entity\UserInterface;
 use ZfcUser\Mapper\UserInterface as UserMapperInterface;
+use ZfcUser\Model\UserInterface;
 use ZfcUser\Options\ModuleOptions;
 
 class Db extends AbstractAdapter

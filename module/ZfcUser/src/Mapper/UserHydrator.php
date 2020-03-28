@@ -3,7 +3,7 @@
 namespace ZfcUser\Mapper;
 
 use Laminas\Hydrator\ClassMethodsHydrator;
-use ZfcUser\Entity\UserInterface as UserEntityInterface;
+use ZfcUser\Model\UserInterface as UserEntityInterface;
 
 class UserHydrator extends ClassMethodsHydrator
 {
@@ -17,7 +17,7 @@ class UserHydrator extends ClassMethodsHydrator
     public function extract(object $object): array
     {
         if (!$object instanceof UserEntityInterface) {
-            throw new Exception\InvalidArgumentException('$object must be an instance of ZfcUser\Entity\UserInterface');
+            throw new Exception\InvalidArgumentException('$object must be an instance of ZfcUser\Model\UserInterface');
         }
 
         /* @var $object UserEntityInterface */
@@ -42,7 +42,7 @@ class UserHydrator extends ClassMethodsHydrator
     public function hydrate(array $data, $object)
     {
         if (!$object instanceof UserEntityInterface) {
-            throw new Exception\InvalidArgumentException('$object must be an instance of ZfcUser\Entity\UserInterface');
+            throw new Exception\InvalidArgumentException('$object must be an instance of ZfcUser\Model\UserInterface');
         }
 
         $data = $this->mapField('user_id', 'id', $data);

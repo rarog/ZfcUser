@@ -14,10 +14,10 @@ use Laminas\Stdlib\Parameters;
 use PHPUnit\Framework\TestCase;
 use ZfcUser\Authentication\Adapter\AdapterChainEvent;
 use ZfcUser\Authentication\Adapter\Db;
-use ZfcUser\Entity\User;
-use ZfcUser\Entity\UserInterface;
 use ZfcUser\Mapper\User as UserMapper;
 use ZfcUser\Mapper\UserInterface as UserInterfaceMapper;
+use ZfcUser\Model\User;
+use ZfcUser\Model\UserInterface;
 use ZfcUser\Options\ModuleOptions;
 use ReflectionMethod;
 
@@ -61,7 +61,7 @@ class DbTest extends TestCase
     /**
      * Mock of User.
      *
-     * @var \ZfcUser\Entity\UserInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var \ZfcUser\Model\UserInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $user;
 

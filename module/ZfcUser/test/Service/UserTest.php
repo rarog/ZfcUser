@@ -4,9 +4,9 @@ namespace ZfcUserTest\Service;
 
 use Laminas\Crypt\Password\Bcrypt;
 use PHPUnit\Framework\TestCase;
-use ZfcUser\Entity\User;
 use ZfcUser\Form\Register;
 use ZfcUser\Mapper\UserInterface;
+use ZfcUser\Model\User;
 use ZfcUser\Options\ModuleOptions;
 use ZfcUser\Service\User as Service;
 use ZfcUser\Form\ChangePassword;

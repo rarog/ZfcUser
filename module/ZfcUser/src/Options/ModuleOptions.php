@@ -71,7 +71,7 @@ class ModuleOptions extends AbstractOptions implements
     /**
      * @var string
      */
-    protected $userEntityClass = 'ZfcUser\Entity\User';
+    protected $userEntityClass = 'ZfcUser\Model\User';
 
     /**
      * @var string

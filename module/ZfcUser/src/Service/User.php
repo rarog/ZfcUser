@@ -59,7 +59,7 @@ class User extends EventProvider
      * createFromForm
      *
      * @param array $data
-     * @return \ZfcUser\Entity\UserInterface
+     * @return \ZfcUser\Model\UserInterface
      * @throws Exception\InvalidArgumentException
      */
     public function register(array $data)
@@ -75,7 +75,7 @@ class User extends EventProvider
         }
 
         $user = $form->getData();
-        /* @var $user \ZfcUser\Entity\UserInterface */
+        /* @var $user \ZfcUser\Model\UserInterface */
 
         $bcrypt = new Bcrypt;
         $bcrypt->setCost($this->getOptions()->getPasswordCost());

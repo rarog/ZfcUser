@@ -4,7 +4,7 @@ namespace ZfcUser\View\Helper;
 
 use Laminas\View\Helper\AbstractHelper;
 use Laminas\Authentication\AuthenticationService;
-use ZfcUser\Entity\UserInterface as User;
+use ZfcUser\Model\UserInterface as User;
 
 class ZfcUserDisplayName extends AbstractHelper
 {
@@ -17,7 +17,7 @@ class ZfcUserDisplayName extends AbstractHelper
      * __invoke
      *
      * @access public
-     * @param \ZfcUser\Entity\UserInterface $user
+     * @param \ZfcUser\Model\UserInterface $user
      * @throws \ZfcUser\Exception\DomainException
      * @return String
      */

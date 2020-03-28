@@ -3,7 +3,7 @@
 namespace ZfcUserTest\Mapper;
 
 use PHPUnit\Framework\TestCase;
-use ZfcUser\Entity\User;
+use ZfcUser\Model\User;
 use ZfcUser\Mapper\UserHydrator as Hydrator;
 use stdClass;
 use ZfcUser\Mapper\Exception\InvalidArgumentException;
