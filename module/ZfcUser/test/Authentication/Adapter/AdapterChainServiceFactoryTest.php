@@ -86,19 +86,19 @@ class AdapterChainServiceFactoryTest extends TestCase
     }
 
     /**
-     * @covers \ZfcUser\Authentication\Adapter\AdapterChainServiceFactory::createService
+     * @covers \ZfcUser\Authentication\Adapter\AdapterChainServiceFactory::__invoke
      */
-    public function testCreateService(): void
+    public function testInvoke(): void
     {
         $adapter = [
-            'adapter1' => $this->getMockBuilder(
-                AbstractAdapter::class,
-                ['authenticate', 'logout']
-            )->getMock(),
-            'adapter2' => $this->getMockBuilder(
-                AbstractAdapter::class,
-                ['authenticate', 'logout']
-            )->getMock()
+            'adapter1' => $this->getMockBuilder(AbstractAdapter::class)
+                ->onlyMethods(['authenticate'])
+                ->addMethods(['logout'])
+                ->getMock(),
+            'adapter2' => $this->getMockBuilder(AbstractAdapter::class)
+                ->onlyMethods(['authenticate'])
+                ->addMethods(['logout'])
+                ->getMock(),
         ];
         $adapterNames = [
             100 => 'adapter1',
