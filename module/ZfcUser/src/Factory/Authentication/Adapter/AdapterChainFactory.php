@@ -1,15 +1,20 @@
 <?php
 
-namespace ZfcUser\Authentication\Adapter;
+namespace ZfcUser\Factory\Authentication\Adapter;
 
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use ZfcUser\Authentication\Adapter\AdapterChain;
 use ZfcUser\Authentication\Adapter\Exception\OptionsNotFoundException;
 use ZfcUser\Options\ModuleOptions;
 
-class AdapterChainServiceFactory implements FactoryInterface
+class AdapterChainFactory implements FactoryInterface
 {
+    /**
+     * {@inheritDoc}
+     * @see \Laminas\ServiceManager\Factory\FactoryInterface::__invoke()
+     */
     public function __invoke(ContainerInterface $serviceLocator, $requestedName, array $options = null)
     {
         $chain = new AdapterChain();
@@ -38,17 +43,11 @@ class AdapterChainServiceFactory implements FactoryInterface
      */
     protected $options;
 
-    public function createService(ServiceLocatorInterface $serviceLocator)
-    {
-        $this->__invoke($serviceLocator, null);
-    }
-
-
     /**
      * set options
      *
      * @param ModuleOptions $options
-     * @return AdapterChainServiceFactory
+     * @return AdapterChainFactory
      */
     public function setOptions(ModuleOptions $options)
     {
@@ -63,7 +62,7 @@ class AdapterChainServiceFactory implements FactoryInterface
      * @return ModuleOptions $options
      * @throws OptionsNotFoundException If options tried to retrieve without being set but no SL was provided
      */
-    public function getOptions(ServiceLocatorInterface $serviceLocator = null)
+    public function getOptions(ContainerInterface $serviceLocator = null)
     {
         if (! $this->options) {
             if (! $serviceLocator) {

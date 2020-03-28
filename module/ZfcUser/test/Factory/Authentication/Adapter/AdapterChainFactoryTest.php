@@ -1,22 +1,22 @@
 <?php
 
-namespace ZfcUserTest\Authentication\Adapter;
+namespace ZfcUserTest\Factory\Authentication\Adapter;
 
 use Laminas\EventManager\EventManager;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use PHPUnit\Framework\TestCase;
 use ZfcUser\Authentication\Adapter\AbstractAdapter;
 use ZfcUser\Authentication\Adapter\AdapterChain;
-use ZfcUser\Authentication\Adapter\AdapterChainServiceFactory;
+use ZfcUser\Factory\Authentication\Adapter\AdapterChainFactory;
 use ZfcUser\Authentication\Adapter\Exception\OptionsNotFoundException;
 use ZfcUser\Options\ModuleOptions;
 
-class AdapterChainServiceFactoryTest extends TestCase
+class AdapterChainFactoryTest extends TestCase
 {
     /**
      * The object to be tested.
      *
-     * @var AdapterChainServiceFactory
+     * @var AdapterChainFactory
      */
     protected $factory;
 
@@ -69,7 +69,7 @@ class AdapterChainServiceFactoryTest extends TestCase
             'EventManager' => $this->eventManager,
         ];
 
-        $this->factory = new AdapterChainServiceFactory();
+        $this->factory = new AdapterChainFactory();
     }
 
     /**
@@ -86,7 +86,7 @@ class AdapterChainServiceFactoryTest extends TestCase
     }
 
     /**
-     * @covers \ZfcUser\Authentication\Adapter\AdapterChainServiceFactory::__invoke
+     * @covers \ZfcUser\Factory\Authentication\Adapter\AdapterChainFactory::__invoke
      */
     public function testInvoke(): void
     {
@@ -117,8 +117,8 @@ class AdapterChainServiceFactoryTest extends TestCase
     }
 
     /**
-     * @covers \ZfcUser\Authentication\Adapter\AdapterChainServiceFactory::setOptions
-     * @covers \ZfcUser\Authentication\Adapter\AdapterChainServiceFactory::getOptions
+     * @covers \ZfcUser\Factory\Authentication\Adapter\AdapterChainFactory::setOptions
+     * @covers \ZfcUser\Factory\Authentication\Adapter\AdapterChainFactory::getOptions
      */
     public function testGetOptionWithSetter(): void
     {
@@ -139,7 +139,7 @@ class AdapterChainServiceFactoryTest extends TestCase
     }
 
     /**
-     * @covers \ZfcUser\Authentication\Adapter\AdapterChainServiceFactory::getOptions
+     * @covers \ZfcUser\Factory\Authentication\Adapter\AdapterChainFactory::getOptions
      */
     public function testGetOptionWithLocator(): void
     {
@@ -150,7 +150,7 @@ class AdapterChainServiceFactoryTest extends TestCase
     }
 
     /**
-     * @covers \ZfcUser\Authentication\Adapter\AdapterChainServiceFactory::getOptions
+     * @covers \ZfcUser\Factory\Authentication\Adapter\AdapterChainFactory::getOptions
      */
     public function testGetOptionFailing(): void
     {

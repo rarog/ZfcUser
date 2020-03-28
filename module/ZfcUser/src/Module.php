@@ -10,11 +10,11 @@ use Laminas\ModuleManager\Feature\ControllerProviderInterface;
 use Laminas\ModuleManager\Feature\ServiceProviderInterface;
 use Laminas\ModuleManager\Feature\ViewHelperProviderInterface;
 use ZfcUser\Authentication\Adapter\AdapterChain;
-use ZfcUser\Authentication\Adapter\AdapterChainServiceFactory;
 use ZfcUser\Authentication\Adapter\Db as AdapterDb;
 use ZfcUser\Authentication\Storage\Db as StorageDb;
 use ZfcUser\Factory\AuthenticationService;
 use ZfcUser\Factory\UserHydrator;
+use ZfcUser\Factory\Authentication\Adapter\AdapterChainFactory;
 use ZfcUser\Factory\Authentication\Adapter\DbFactory as AdapterDbFactory;
 use ZfcUser\Factory\Authentication\Storage\DbFactory as StorageDbFactory;
 use ZfcUser\Factory\Controller\RedirectCallbackFactory;
@@ -104,7 +104,7 @@ class Module implements
             'factories' => [
                 'zfcuser_redirect_callback' => RedirectCallbackFactory::class,
                 'zfcuser_module_options' => ModuleOptions::class,
-                AdapterChain::class => AdapterChainServiceFactory::class,
+                AdapterChain::class => AdapterChainFactory::class,
 
                 // We alias this one because it's ZfcUser's instance of
                 // Laminas\Authentication\AuthenticationService. We don't want to
