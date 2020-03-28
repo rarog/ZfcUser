@@ -5,7 +5,6 @@ namespace ZfcUserTest\Authentication\Adapter;
 use Laminas\Authentication\Result;
 use Laminas\Authentication\Storage\Session;
 use Laminas\Crypt\Password\Bcrypt;
-use Laminas\EventManager\Event;
 use Laminas\Http\Request;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\ServiceManager\ServiceManager;
@@ -173,8 +172,7 @@ class DbTest extends TestCase
 
         $this->db->setOptions($this->options);
 
-        $event = new AdapterChainEvent(null, $this->authEvent);
-        $result = $this->db->authenticate($event);
+        $result = $this->db->authenticate($this->authEvent);
 
         $this->assertFalse($result);
         $this->assertFalse($this->db->isSatisfied());
@@ -211,8 +209,7 @@ class DbTest extends TestCase
         $this->db->setMapper($this->mapper);
         $this->db->setOptions($this->options);
 
-        $event = new AdapterChainEvent(null, $this->authEvent);
-        $result = $this->db->authenticate($event);
+        $result = $this->db->authenticate($this->authEvent);
 
         $this->assertFalse($result);
         $this->assertFalse($this->db->isSatisfied());
@@ -246,8 +243,7 @@ class DbTest extends TestCase
         $this->db->setMapper($this->mapper);
         $this->db->setOptions($this->options);
 
-        $event = new AdapterChainEvent(null, $this->authEvent);
-        $result = $this->db->authenticate($event);
+        $result = $this->db->authenticate($this->authEvent);
 
         $this->assertFalse($result);
         $this->assertFalse($this->db->isSatisfied());
@@ -296,8 +292,7 @@ class DbTest extends TestCase
         $this->db->setMapper($this->mapper);
         $this->db->setOptions($this->options);
 
-        $event = new AdapterChainEvent(null, $this->authEvent);
-        $this->db->authenticate($event);
+        $this->db->authenticate($this->authEvent);
     }
 
     /**
@@ -350,8 +345,7 @@ class DbTest extends TestCase
         $this->db->setMapper($this->mapper);
         $this->db->setOptions($this->options);
 
-        $event = new AdapterChainEvent(null, $this->authEvent);
-        $this->db->authenticate($event);
+        $this->db->authenticate($this->authEvent);
     }
 
     /**

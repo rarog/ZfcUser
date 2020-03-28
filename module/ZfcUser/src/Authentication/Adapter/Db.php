@@ -4,7 +4,6 @@ namespace ZfcUser\Authentication\Adapter;
 
 use Interop\Container\ContainerInterface;
 use Laminas\Authentication\Result as AuthenticationResult;
-use Laminas\EventManager\EventInterface;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Crypt\Password\Bcrypt;
 use Laminas\Session\Container as SessionContainer;
@@ -53,7 +52,7 @@ class Db extends AbstractAdapter
             $storage = $this->getStorage()->read();
             $e->setIdentity($storage['identity'])
               ->setCode(AuthenticationResult::SUCCESS)
-              ->setMessages(array('Authentication successful.'));
+              ->setMessages(['Authentication successful.']);
             return;
         }
 
@@ -65,7 +64,7 @@ class Db extends AbstractAdapter
 
         // Cycle through the configured identity sources and test each
         $fields = $this->getOptions()->getAuthIdentityFields();
-        while (!is_object($userObject) && count($fields) > 0) {
+        while (! is_object($userObject) && count($fields) > 0) {
             $mode = array_shift($fields);
             switch ($mode) {
                 case 'username':
@@ -77,18 +76,18 @@ class Db extends AbstractAdapter
             }
         }
 
-        if (!$userObject) {
+        if (! $userObject) {
             $e->setCode(AuthenticationResult::FAILURE_IDENTITY_NOT_FOUND)
-              ->setMessages(array('A record with the supplied identity could not be found.'));
+              ->setMessages(['A record with the supplied identity could not be found.']);
             $this->setSatisfied(false);
             return false;
         }
 
         if ($this->getOptions()->getEnableUserState()) {
             // Don't allow user to login if state is not in allowed list
-            if (!in_array($userObject->getState(), $this->getOptions()->getAllowedLoginStates())) {
+            if (! in_array($userObject->getState(), $this->getOptions()->getAllowedLoginStates())) {
                 $e->setCode(AuthenticationResult::FAILURE_UNCATEGORIZED)
-                  ->setMessages(array('A record with the supplied identity is not active.'));
+                  ->setMessages(['A record with the supplied identity is not active.']);
                 $this->setSatisfied(false);
                 return false;
             }
@@ -96,10 +95,10 @@ class Db extends AbstractAdapter
 
         $bcrypt = new Bcrypt();
         $bcrypt->setCost($this->getOptions()->getPasswordCost());
-        if (!$bcrypt->verify($credential, $userObject->getPassword())) {
+        if (! $bcrypt->verify($credential, $userObject->getPassword())) {
             // Password does not match
             $e->setCode(AuthenticationResult::FAILURE_CREDENTIAL_INVALID)
-              ->setMessages(array('Supplied credential is invalid.'));
+              ->setMessages(['Supplied credential is invalid.']);
             $this->setSatisfied(false);
             return false;
         }
@@ -117,7 +116,7 @@ class Db extends AbstractAdapter
         $storage['identity'] = $e->getIdentity();
         $this->getStorage()->write($storage);
         $e->setCode(AuthenticationResult::SUCCESS)
-          ->setMessages(array('Authentication successful.'));
+          ->setMessages(['Authentication successful.']);
     }
 
     protected function updateUserPasswordHash(UserInterface $userObject, $password, Bcrypt $bcrypt)
