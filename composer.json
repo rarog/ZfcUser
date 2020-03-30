@@ -22,11 +22,6 @@
 			"homepage" : "http://www.spiffyjr.me/"
 		}
 	],
-	"extra" : {
-		"branch-alias" : {
-			"dev-master" : "4.0-dev"
-		}
-	},
 	"require" : {
 		"php" : "^7.2",
 		"laminas/laminas-authentication" : "^2.7",
