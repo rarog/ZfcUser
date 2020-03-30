@@ -172,35 +172,38 @@ out the captcha engine with DI.  For example, to change to Recaptcha, you would
 add this to one of your configuration files (global.config.php,
 module.config.php, or a dedicated recaptcha.config.php):
 
-    <?php
-    // ./config/autoload/recaptcha.config.php
-    return [
-        'di' => [
-            'instance' => [
-                'alias' => [
-                    // OTHER ELEMENTS....
-                    'recaptcha_element' => \Laminas\Form\Element\Captcha::class,
-                ],
-                'recaptcha_element' => [
-                    'parameters' => [
-                        'spec' => 'captcha',
-                        'options' => [
-                            'label' => '',
-                            'required' => true,
-                            'order' => 500,
-                            'captcha' => [
-                                'captcha' => 'ReCaptcha',
-                                'privkey' => RECAPTCHA_PRIVATE_KEY,
-                                'pubkey' => RECAPTCHA_PUBLIC_KEY,
-                            ],
+```php
+<?php
+// ./config/autoload/recaptcha.config.php
+return [
+    'di' => [
+        'instance' => [
+            'alias' => [
+                // OTHER ELEMENTS....
+                'recaptcha_element' => \Laminas\Form\Element\Captcha::class,
+            ],
+            'recaptcha_element' => [
+                'parameters' => [
+                    'spec' => 'captcha',
+                    'options' => [
+                        'label' => '',
+                        'required' => true,
+                        'order' => 500,
+                        'captcha' => [
+                            'captcha' => 'ReCaptcha',
+                            'privkey' => RECAPTCHA_PRIVATE_KEY,
+                            'pubkey' => RECAPTCHA_PUBLIC_KEY,
                         ],
                     ],
                 ],
-                \UserAuthenticator\Form\Register::class => [
-                    'parameters' => [
-                        'captcha_element' => 'recaptcha_element',
-                    ],
+            ],
+            \UserAuthenticator\Form\Register::class => [
+                'parameters' => [
+                    'captcha_element' => 'recaptcha_element',
                 ],
             ],
         ],
-    ];
+    ],
+];
+
+```
