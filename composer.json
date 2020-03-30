@@ -1,6 +1,6 @@
 {
-	"name" : "rarog/laminas-user",
-	"description" : "A generic user registration and authentication module for ZF3/Laminas. Supports Laminas\\Db and Doctrine2.",
+	"name" : "rarog/user-authenticator",
+	"description" : "A generic user registration and authentication module for Laminas. Supports Laminas\\Db.",
 	"type" : "library",
 	"license" : "BSD-3-Clause",
 	"keywords" : [
@@ -8,8 +8,11 @@
 		"user",
 		"authentication"
 	],
-	"homepage" : "https://github.com/rarog/laminas-user",
+	"homepage" : "https://github.com/rarog/user-authenticator",
 	"authors" : [{
+			"name" : "rarog",
+			"email" : "rarogit@gmail.com"
+		}, {
 			"name" : "Evan Coury",
 			"email" : "me@evancoury.com",
 			"homepage" : "http://blog.evan.pro/"
@@ -26,47 +29,48 @@
 	},
 	"require" : {
 		"php" : "^7.2",
-		"laminas/laminas-authentication" : "^2.5",
+		"laminas/laminas-authentication" : "^2.7",
 		"laminas/laminas-crypt" : "^3.0",
-		"laminas/laminas-form" : "^2.9",
-		"laminas/laminas-inputfilter" : "^2.7",
-		"laminas/laminas-loader" : "^2.5",
-		"laminas/laminas-modulemanager" : "^2.7",
+		"laminas/laminas-form" : "^2.14",
+		"laminas/laminas-inputfilter" : "^2.10",
+		"laminas/laminas-loader" : "^2.6",
+		"laminas/laminas-modulemanager" : "^2.8",
 		"laminas/laminas-mvc" : "^3.0",
 		"laminas/laminas-servicemanager" : "^3.0",
 		"laminas/laminas-stdlib" : "^3.0",
-		"laminas/laminas-validator" : "^2.8",
-		"laminas/laminas-db" : "^2.8",
-		"laminas/laminas-view" : "^2.8",
-		"laminas/laminas-session" : "^2.7",
-		"laminas/laminas-http" : "^2.5",
-		"laminas/laminas-mvc-plugin-flashmessenger" : "^1.0",
-		"laminas/laminas-i18n" : "^2.7",
-		"laminas/laminas-mvc-plugin-prg" : "^1.0",
+		"laminas/laminas-validator" : "^2.13",
+		"laminas/laminas-db" : "^2.11",
+		"laminas/laminas-view" : "^2.11",
+		"laminas/laminas-session" : "^2.9",
+		"laminas/laminas-http" : "^2.11",
+		"laminas/laminas-mvc-plugin-flashmessenger" : "^1.2",
+		"laminas/laminas-i18n" : "^2.10",
+		"laminas/laminas-mvc-plugin-prg" : "^1.2",
 		"laminas/laminas-hydrator" : "^3.0"
 	},
 	"require-dev" : {
 		"phpunit/phpunit" : "^8.0 || ^9.0",
 		"phpmd/phpmd" : "1.4.*",
 		"squizlabs/php_codesniffer" : "^3.0",
-		"laminas/laminas-captcha" : "^2.6"
+		"laminas/laminas-captcha" : "^2.9"
 	},
 	"suggest" : {
 		"laminas/laminas-captcha" : "Laminas\\Captcha if you want to use the captcha component"
 	},
 	"autoload" : {
 		"psr-4" : {
-			"ZfcUser\\" : "module/ZfcUser/src"
+			"UserAuthenticator\\" : "module/UserAuthenticator/src"
 		}
 	},
 	"autoload-dev" : {
 		"psr-4" : {
-			"ZfcUserTest\\" : "module/ZfcUser/test"
+			"UserAuthenticatorTest\\" : "module/UserAuthenticator/test"
 		}
 	},
 	"scripts" : {
 		"cs-check" : "phpcs",
 		"cs-fix" : "phpcbf",
 		"test" : "phpunit"
-	}
+	},
+	"minimum-stability" : "stable"
 }

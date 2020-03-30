@@ -12,8 +12,8 @@
          backupGlobals="false"
 >
     <testsuites>
-        <testsuite name="ZfcUser">
-            <directory>./module/ZfcUser/test</directory>
+        <testsuite name="UserAuthenticator">
+            <directory>./module/UserAuthenticator/test</directory>
         </testsuite>
     </testsuites>
     
@@ -31,7 +31,7 @@
 
     <filter>
         <whitelist>
-			<directory suffix=".php">./module/ZfcUser/src</directory>
+			<directory suffix=".php">./module/UserAuthenticator/src</directory>
         </whitelist>
     </filter>
     

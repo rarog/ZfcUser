@@ -1,85 +1,47 @@
-ZfcUser
+UserAuthenticator
 =======
-[![Build Status](https://travis-ci.org/ZF-Commons/ZfcUser.png)](https://travis-ci.org/ZF-Commons/ZfcUser)
-[![Code Coverage](https://scrutinizer-ci.com/g/ZF-Commons/ZfcUser/badges/coverage.png?s=7d5932c77bea64a417ac8e3da51dca6da1fcb22e)](https://scrutinizer-ci.com/g/ZF-Commons/ZfcUser/)
-[![Latest Stable Version](https://poser.pugx.org/zf-commons/zfc-user/v/stable.png)](https://packagist.org/packages/zf-commons/zfc-user)
-[![Latest Unstable Version](https://poser.pugx.org/zf-commons/zfc-user/v/unstable.png)](https://packagist.org/packages/zf-commons/zfc-user)
+[![Build Status](https://travis-ci.org/rarog/user-authenticator.svg?branch=master)](https://travis-ci.org/rarog/user-authenticator)
+[![Code Coverage](https://scrutinizer-ci.com/g/rarog/user-authenticator/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/rarog/user-authenticator/)
 
-Created by Evan Coury and the ZF-Commons team
+Based on ZfcUser by Evan Coury and the ZF-Commons team
 
 Introduction
 ------------
 
-ZfcUser is a user registration and authentication module for Laminas.
-Out of the box, ZfcUser works with Laminas\Db, however alternative storage adapter
-modules are available (see below). ZfcUser provides the foundations for adding
-user authentication and registration to your Laminas site. It is designed to be very
-simple and easy to extend.
-
-More information and examples are available on the [ZfcUser Wiki](https://github.com/ZF-Commons/ZfcUser/wiki)
-
-Versions
---------
-Please use below table to figure out what version of ZfcUser you should use.
-
-| ZfcUser version | Supported Zend Framework version | Status                                      |
-|-----------------|----------------------------------|---------------------------------------------|
-| 1.x             | <= 2.5                           | Security-fixes only                         |
-| 2.x             | >= 2.6 < 3                       | bug-fixes, security-fixes                   |
-| 3.x             | >= 3 / Laminas                   | New features, bug-fixes, security-fixes     |
-
-Storage Adapter Modules
------------------------
-
-By default, ZfcUser ships with support for using Laminas\Db for persisting users.
-However, by installing an optional alternative storage adapter module, you can
-take advantage of other methods of persisting users:
-
-- [ZfcUserDoctrineORM](https://github.com/ZF-Commons/ZfcUserDoctrineORM) - Doctrine2 ORM
-- [ZfcUserDoctrineMongoODM](https://github.com/ZF-Commons/ZfcUserDoctrineMongoODM) - Doctrine2 MongoDB ODM
+UserAuthenticator is a user registration and authentication module for Laminas.
+UserAuthenticator provides the foundations for adding user authentication and
+registration to your Laminas site. It is designed to be very simple and easy to
+extend.
 
 Requirements
 ------------
 
-* [Laminas](https://github.com/ZF-Commons/ZfcUser.git).
+* [Laminas](https://getlaminas.org/).
+
+If you are looking for versions based on ZendFramework, please look to the original [ZfcUser](https://github.com/ZF-Commons/ZfcUser/).
 
 Features / Goals
 ----------------
 
 * Authenticate via username, email, or both (can opt out of the concept of
-  username and use strictly email) [COMPLETE]
-* User registration [COMPLETE]
-* Forms protected against CSRF [COMPLETE]
-* Out-of-the-box support for Doctrine2 _and_ Laminas\Db [COMPLETE]
-* Robust event system to allow for extending [COMPLETE]
-* Provide ActionController plugin and view helper [COMPLETE]
+  username and use strictly email)
+* User registration
+* Forms protected against CSRF
+* Robust event system to allow for extending
+* Provide ActionController plugin and view helper
 
 Installation
 ------------
 
 ### Main Setup
 
-#### By cloning project
+#### Via composer
 
-1. Install the [ZfcBase](https://github.com/ZF-Commons/ZfcBase) ZF2 module
-   by cloning it into `./vendor/`.
-2. Clone this project into your `./vendor/` directory.
+Install the model using [Composer](https://getcomposer.org):
 
-#### With composer
-
-1. Add this project and [ZfcBase](https://github.com/ZF-Commons/ZfcBase) in your composer.json:
-
-    ```json
-    "require": {  
-        "zf-commons/zfc-user": "^3.0"  
-    }  
-    ```
-
-2. Now tell composer to download ZfcUser by running the command:
-
-    ```bash
-    $ php composer.phar update
-    ```
+```bash
+$ composer require rarog/user-authenticator
+```
 
 #### Post installation
 
@@ -87,24 +49,16 @@ Installation
 
     ```php
     <?php
-    return array(
-        'modules' => array(
+    return [
+        'modules' => [
             // ...
-            'ZfcUser',
-        ),
+            'UserAuthenticator',
+        ],
         // ...
-    );
+    ];
     ```
 
-2. Then Import the SQL schema located in `./vendor/zf-commons/zfc-user/data/schema.sql` (if you installed using the Composer) or in `./vendor/ZfcUser/data/schema.sql`.
-
-### Post-Install: Doctrine2 ORM
-
-Coming soon...
-
-### Post-Install: Doctrine2 MongoDB ODM
-
-Coming soon...
+2. Then import the fitting SQL schema located in `./vendor/rarog/user-authenticator/data/`.
 
 ### Post-Install: Laminas\Db
 
@@ -123,7 +77,7 @@ return array(
     ),
     'service_manager' => array(
         'factories' => array(
-            'Laminas\Db\Adapter\Adapter' => 'Laminas\Db\Adapter\AdapterServiceFactory',
+            \Laminas\Db\Adapter\Adapter::class => \Laminas\Db\Adapter\AdapterServiceFactory::class,
         ),
     ),
 );
@@ -162,14 +116,14 @@ Options
 
 The ZfcUser module has some options to allow you to quickly customize the basic
 functionality. After installing ZfcUser, copy
-`./vendor/zf-commons/zfc-user/config/zfcuser.global.php.dist` to
-`./config/autoload/zfcuser.global.php` and change the values as desired.
+`./vendor/rarog/user-authenticator/config/user-authenticator.global.php.dist` to
+`./config/autoload/user-authenticator.global.php` and change the values as desired.
 
 The following options are available:
 
 - **user_entity_class** - Name of Entity class to use. Useful for using your own
   entity class instead of the default one provided. Default is
-  `ZfcUser\Model\User`.
+  `\UserAuthenticator\Model\User::class`.
 - **enable_username** - Boolean value, enables username field on the
   registration form. Default is `false`.
 - **auth_identity_fields** - Array value, specifies which fields a user can
@@ -220,33 +174,33 @@ module.config.php, or a dedicated recaptcha.config.php):
 
     <?php
     // ./config/autoload/recaptcha.config.php
-    return array(
-        'di'=> array(
-            'instance'=>array(
-                'alias'=>array(
+    return [
+        'di' => [
+            'instance' => [
+                'alias' => [
                     // OTHER ELEMENTS....
-                    'recaptcha_element' => 'Laminas\Form\Element\Captcha',
-                ),
-                'recaptcha_element' => array(
-                    'parameters' => array(
+                    'recaptcha_element' => \Laminas\Form\Element\Captcha::class,
+                ],
+                'recaptcha_element' => [
+                    'parameters' => [
                         'spec' => 'captcha',
-                        'options'=>array(
-                            'label'      => '',
-                            'required'   => true,
-                            'order'      => 500,
-                            'captcha'    => array(
+                        'options' => [
+                            'label' => '',
+                            'required' => true,
+                            'order' => 500,
+                            'captcha' => [
                                 'captcha' => 'ReCaptcha',
                                 'privkey' => RECAPTCHA_PRIVATE_KEY,
-                                'pubkey'  => RECAPTCHA_PUBLIC_KEY,
-                            ),
-                        ),
-                    ),
-                ),
-                'ZfcUser\Form\Register' => array(
-                    'parameters' => array(
-                        'captcha_element'=>'recaptcha_element',
-                    ),
-                ),
-            ),
-        ),
-    );
+                                'pubkey' => RECAPTCHA_PUBLIC_KEY,
+                            ],
+                        ],
+                    ],
+                ],
+                \UserAuthenticator\Form\Register::class => [
+                    'parameters' => [
+                        'captcha_element' => 'recaptcha_element',
+                    ],
+                ],
+            ],
+        ],
+    ];

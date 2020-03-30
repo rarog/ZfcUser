@@ -24,7 +24,7 @@
 
     <!-- Paths to check -->
     <file>config</file>
-    <file>module/ZfcUser/config</file>
-    <file>module/ZfcUser/src</file>
-    <file>module/ZfcUser/test</file>
+    <file>module/UserAuthenticator/config</file>
+    <file>module/UserAuthenticator/src</file>
+    <file>module/UserAuthenticator/test</file>
 </ruleset>
