@@ -474,7 +474,7 @@ class DbTest extends TestCase
             ->getMock();
         $serviceMapper->expects($this->once())
             ->method('get')
-            ->with('zfcuser_module_options')
+            ->with(ModuleOptions::class)
             ->will($this->returnValue($this->options));
 
         $this->db->setServiceManager($serviceMapper);
@@ -509,7 +509,7 @@ class DbTest extends TestCase
             ->getMock();
         $serviceMapper->expects($this->once())
             ->method('get')
-            ->with('zfcuser_user_mapper')
+            ->with(UserMapper::class)
             ->will($this->returnValue($this->mapper));
 
         $this->db->setServiceManager($serviceMapper);

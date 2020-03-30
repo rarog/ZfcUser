@@ -7,7 +7,7 @@
  * drop this config file in it and change the values as you wish.
  */
 
-use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\Adapter\AdapterInterface;
 use UserAuthenticator\Model\User;
 use UserAuthenticator\Authentication\Adapter\Db;
 
@@ -18,7 +18,7 @@ $settings = [
      * Please specify the DI alias for the configured Laminas\Db\Adapter\Adapter
      * instance that UserAuthenticator should use.
      */
-    //'zend_db_adapter' => Adapter::class,
+    //'laminas_db_adapter' => AdapterInterface::class,
 
     /**
      * User model class
@@ -245,8 +245,8 @@ return [
     'zfcuser' => $settings,
     'service_manager' => [
         'aliases' => [
-            'zfcuser_zend_db_adapter' => (isset($settings['zend_db_adapter'])) ?
-                $settings['zend_db_adapter'] : Adapter::class,
+            'user_authenticator_laminas_db_adapter' => (isset($settings['laminas_db_adapter'])) ?
+                $settings['laminas_db_adapter'] : AdapterInterface::class,
         ],
     ],
 ];

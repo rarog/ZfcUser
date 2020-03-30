@@ -16,9 +16,9 @@ class RegisterFormFactoryTest extends TestCase
     public function testFactory()
     {
         $serviceManager = new ServiceManager();
-        $serviceManager->setService('zfcuser_module_options', new ModuleOptions());
-        $serviceManager->setService('zfcuser_user_mapper', new UserMapper());
-        $serviceManager->setService('zfcuser_register_form_hydrator', new ClassMethodsHydrator());
+        $serviceManager->setService(ModuleOptions::class, new ModuleOptions());
+        $serviceManager->setService(UserMapper::class, new UserMapper());
+        $serviceManager->setService(ClassMethodsHydrator::class, new ClassMethodsHydrator());
 
         $formElementManager = new FormElementManager($serviceManager);
         $serviceManager->setService('FormElementManager', $formElementManager);

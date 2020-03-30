@@ -16,8 +16,8 @@ class ChangeEmailFormFactoryTest extends TestCase
     {
         $serviceManager = new ServiceManager([
             'services' => [
-                'zfcuser_module_options' => new ModuleOptions(),
-                'zfcuser_user_mapper' => new UserMapper()
+                ModuleOptions::class => new ModuleOptions(),
+                UserMapper::class => new UserMapper()
             ]
         ]);
 

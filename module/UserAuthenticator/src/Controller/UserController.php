@@ -9,6 +9,10 @@ use Laminas\Stdlib\Parameters;
 use Laminas\Stdlib\ResponseInterface as Response;
 use Laminas\View\Model\ViewModel;
 use UserAuthenticator\Form\ChangeEmail;
+use UserAuthenticator\Form\ChangePassword;
+use UserAuthenticator\Form\Login;
+use UserAuthenticator\Form\Register;
+use UserAuthenticator\Options\ModuleOptions;
 use UserAuthenticator\Options\UserControllerOptionsInterface;
 use UserAuthenticator\Service\User as UserService;
 
@@ -360,7 +364,7 @@ class UserController extends AbstractActionController
     public function getUserService()
     {
         if (! $this->userService) {
-            $this->userService = $this->serviceLocator->get('zfcuser_user_service');
+            $this->userService = $this->serviceLocator->get(UserService::class);
         }
         return $this->userService;
     }
@@ -374,7 +378,7 @@ class UserController extends AbstractActionController
     public function getRegisterForm()
     {
         if (! $this->registerForm) {
-            $this->setRegisterForm($this->serviceLocator->get('zfcuser_register_form'));
+            $this->setRegisterForm($this->serviceLocator->get(Register::class));
         }
         return $this->registerForm;
     }
@@ -387,7 +391,7 @@ class UserController extends AbstractActionController
     public function getLoginForm()
     {
         if (! $this->loginForm) {
-            $this->setLoginForm($this->serviceLocator->get('zfcuser_login_form'));
+            $this->setLoginForm($this->serviceLocator->get(Login::class));
         }
         return $this->loginForm;
     }
@@ -401,7 +405,7 @@ class UserController extends AbstractActionController
     public function getChangePasswordForm()
     {
         if (! $this->changePasswordForm) {
-            $this->setChangePasswordForm($this->serviceLocator->get('zfcuser_change_password_form'));
+            $this->setChangePasswordForm($this->serviceLocator->get(ChangePassword::class));
         }
         return $this->changePasswordForm;
     }
@@ -432,7 +436,7 @@ class UserController extends AbstractActionController
     public function getOptions()
     {
         if (! $this->options instanceof UserControllerOptionsInterface) {
-            $this->setOptions($this->serviceLocator->get('zfcuser_module_options'));
+            $this->setOptions($this->serviceLocator->get(ModuleOptions::class));
         }
         return $this->options;
     }
@@ -444,7 +448,7 @@ class UserController extends AbstractActionController
     public function getChangeEmailForm()
     {
         if (! $this->changeEmailForm) {
-            $this->setChangeEmailForm($this->serviceLocator->get('zfcuser_change_email_form'));
+            $this->setChangeEmailForm($this->serviceLocator->get(ChangeEmail::class));
         }
         return $this->changeEmailForm;
     }

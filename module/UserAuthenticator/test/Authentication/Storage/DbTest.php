@@ -203,7 +203,7 @@ class DbTest extends TestCase
             ->getMock();
         $sm->expects($this->once())
             ->method('get')
-            ->with('zfcuser_user_mapper')
+            ->with(UserInterface::class)
             ->will($this->returnValue($this->mapper));
 
         $this->db->setServiceManager($sm);

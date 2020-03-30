@@ -2,34 +2,12 @@
 
 namespace UserAuthenticator;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Hydrator\ClassMethodsHydrator;
+use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\ModuleManager\Feature\ConfigProviderInterface;
 use Laminas\ModuleManager\Feature\ControllerPluginProviderInterface;
 use Laminas\ModuleManager\Feature\ControllerProviderInterface;
 use Laminas\ModuleManager\Feature\ServiceProviderInterface;
 use Laminas\ModuleManager\Feature\ViewHelperProviderInterface;
-use UserAuthenticator\Authentication\Adapter\AdapterChain;
-use UserAuthenticator\Authentication\Adapter\Db as AdapterDb;
-use UserAuthenticator\Authentication\Storage\Db as StorageDb;
-use UserAuthenticator\Factory\AuthenticationServiceFactory;
-use UserAuthenticator\Factory\UserHydratorFactory;
-use UserAuthenticator\Factory\Authentication\Adapter\AdapterChainFactory;
-use UserAuthenticator\Factory\Authentication\Adapter\DbFactory as AdapterDbFactory;
-use UserAuthenticator\Factory\Authentication\Storage\DbFactory as StorageDbFactory;
-use UserAuthenticator\Factory\Controller\RedirectCallbackFactory;
-use UserAuthenticator\Factory\Controller\UserControllerFactory;
-use UserAuthenticator\Factory\Controller\Plugin\UserAuthenticatorAuthenticationFactory;
-use UserAuthenticator\Factory\Form\ChangeEmailFactory;
-use UserAuthenticator\Factory\Form\ChangePasswordFactory;
-use UserAuthenticator\Factory\Form\LoginFactory;
-use UserAuthenticator\Factory\Form\RegisterFactory;
-use UserAuthenticator\Factory\Mapper\UserFactory as MapperUserFactory;
-use UserAuthenticator\Factory\Options\ModuleOptionsFactory;
-use UserAuthenticator\Factory\Service\UserFactory as ServiceUserFactory;
-use UserAuthenticator\Factory\View\Helper\UserAuthenticatorDisplayNameFactory;
-use UserAuthenticator\Factory\View\Helper\UserAuthenticatorIdentityFactory;
-use UserAuthenticator\Factory\View\Helper\UserAuthenticatorLoginWidgetFactory;
 
 class Module implements
     ControllerProviderInterface,
@@ -55,7 +33,7 @@ class Module implements
     {
         return [
             'factories' => [
-                'zfcUserAuthentication' => UserAuthenticatorAuthenticationFactory::class,
+                'zfcUserAuthentication' => Factory\Controller\Plugin\UserAuthenticatorAuthenticationFactory::class,
             ],
         ];
     }
@@ -68,7 +46,7 @@ class Module implements
     {
         return [
             'factories' => [
-                'zfcuser' => UserControllerFactory::class,
+                'zfcuser' => Factory\Controller\UserControllerFactory::class,
             ],
         ];
     }
@@ -81,9 +59,9 @@ class Module implements
     {
         return [
             'factories' => [
-                'zfcUserDisplayName' => UserAuthenticatorDisplayNameFactory::class,
-                'zfcUserIdentity' => UserAuthenticatorIdentityFactory::class,
-                'zfcUserLoginWidget' => UserAuthenticatorLoginWidgetFactory::class,
+                'zfcUserDisplayName' => Factory\View\Helper\UserAuthenticatorDisplayNameFactory::class,
+                'zfcUserIdentity' => Factory\View\Helper\UserAuthenticatorIdentityFactory::class,
+                'zfcUserLoginWidget' => Factory\View\Helper\UserAuthenticatorLoginWidgetFactory::class,
             ],
         ];
     }
@@ -96,33 +74,26 @@ class Module implements
     {
         return [
             'aliases' => [
-                'zfcuser_zend_db_adapter' => Adapter::class,
-            ],
-            'invokables' => [
-                'zfcuser_register_form_hydrator' => ClassMethodsHydrator::class,
+                'user_authenticator_laminas_db_adapter' => AdapterInterface::class,
             ],
             'factories' => [
-                'zfcuser_redirect_callback' => RedirectCallbackFactory::class,
-                'zfcuser_module_options' => ModuleOptionsFactory::class,
-                AdapterChain::class => AdapterChainFactory::class,
+                Authentication\Adapter\AdapterChain::class =>
+                    Factory\Authentication\Adapter\AdapterChainFactory::class,
+                Authentication\Adapter\Db::class => Factory\Authentication\Adapter\DbFactory::class,
+                Authentication\Storage\Db::class => Factory\Authentication\Storage\DbFactory::class,
+                Controller\RedirectCallback::class => Factory\Controller\RedirectCallbackFactory::class,
+                Form\ChangeEmail::class => Factory\Form\ChangeEmailFactory::class,
+                Form\ChangePassword::class => Factory\Form\ChangePasswordFactory::class,
+                Form\Login::class => Factory\Form\LoginFactory::class,
+                Form\Register::class => Factory\Form\RegisterFactory::class,
+                Mapper\User::class => Factory\Mapper\UserFactory::class,
+                Options\ModuleOptions::class => Factory\Options\ModuleOptionsFactory::class,
+                Service\User::class => Factory\Service\UserFactory::class,
 
                 // We alias this one because it's UserAuthenticator's instance of
                 // Laminas\Authentication\AuthenticationService. We don't want to
                 // hog the FQCN service alias for a Laminas\* class.
-                'zfcuser_auth_service' => AuthenticationServiceFactory::class,
-
-                'zfcuser_user_hydrator' => UserHydratorFactory::class,
-                'zfcuser_user_mapper' => MapperUserFactory::class,
-
-                'zfcuser_login_form' => LoginFactory::class,
-                'zfcuser_register_form' => RegisterFactory::class,
-                'zfcuser_change_password_form' => ChangePasswordFactory::class,
-                'zfcuser_change_email_form' => ChangeEmailFactory::class,
-
-                AdapterDb::class => AdapterDbFactory::class,
-                StorageDb::class => StorageDbFactory::class,
-
-                'zfcuser_user_service' => ServiceUserFactory::class,
+                'zfcuser_auth_service' => Factory\AuthenticationServiceFactory::class,
             ],
         ];
     }

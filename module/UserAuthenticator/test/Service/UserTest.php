@@ -2,18 +2,20 @@
 
 namespace UserAuthenticatorTest\Service;
 
+use Laminas\Authentication\AuthenticationService;
 use Laminas\Crypt\Password\Bcrypt;
+use Laminas\EventManager\EventManager;
+use Laminas\Hydrator\ClassMethodsHydrator;
+use Laminas\Hydrator\HydratorInterface;
+use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
+use UserAuthenticator\Form\ChangePassword;
 use UserAuthenticator\Form\Register;
+use UserAuthenticator\Mapper\User as UserMapper;
 use UserAuthenticator\Mapper\UserInterface;
 use UserAuthenticator\Model\User;
 use UserAuthenticator\Options\ModuleOptions;
 use UserAuthenticator\Service\User as Service;
-use UserAuthenticator\Form\ChangePassword;
-use Laminas\ServiceManager\ServiceManager;
-use Laminas\EventManager\EventManager;
-use Laminas\Hydrator\HydratorInterface;
-use Laminas\Authentication\AuthenticationService;
 
 class UserTest extends TestCase
 {
@@ -470,7 +472,7 @@ class UserTest extends TestCase
     {
         $this->serviceManager->expects($this->once())
             ->method('get')
-            ->with('zfcuser_user_mapper')
+            ->with(UserMapper::class)
             ->will($this->returnValue($this->mapper));
 
         $service = new Service();
@@ -520,7 +522,7 @@ class UserTest extends TestCase
 
         $this->serviceManager->expects($this->once())
             ->method('get')
-            ->with('zfcuser_register_form')
+            ->with(Register::class)
             ->will($this->returnValue($form));
 
         $service = new Service();
@@ -553,7 +555,7 @@ class UserTest extends TestCase
 
         $this->serviceManager->expects($this->once())
             ->method('get')
-            ->with('zfcuser_change_password_form')
+            ->with(ChangePassword::class)
             ->will($this->returnValue($form));
 
         $service = new Service();
@@ -580,7 +582,7 @@ class UserTest extends TestCase
     {
         $this->serviceManager->expects($this->once())
             ->method('get')
-            ->with('zfcuser_module_options')
+            ->with(ModuleOptions::class)
             ->will($this->returnValue($this->options));
 
         $service = new Service();
@@ -612,7 +614,7 @@ class UserTest extends TestCase
     {
         $this->serviceManager->expects($this->once())
             ->method('get')
-            ->with('zfcuser_register_form_hydrator')
+            ->with(ClassMethodsHydrator::class)
             ->will($this->returnValue($this->formHydrator));
 
         $service = new Service();

@@ -9,8 +9,13 @@ use Laminas\ServiceManager\ServiceManager;
 use Laminas\Crypt\Password\Bcrypt;
 use Laminas\Hydrator;
 use UserAuthenticator\EventManager\EventProvider;
+use UserAuthenticator\Form\ChangePassword;
+use UserAuthenticator\Form\Register;
 use UserAuthenticator\Mapper\UserInterface as UserMapperInterface;
+use UserAuthenticator\Mapper\User as UserMapper;
+use UserAuthenticator\Options\ModuleOptions;
 use UserAuthenticator\Options\UserServiceOptionsInterface;
+use Laminas\Hydrator\ClassMethodsHydrator;
 
 class User extends EventProvider
 {
@@ -156,7 +161,7 @@ class User extends EventProvider
     public function getUserMapper()
     {
         if (null === $this->userMapper) {
-            $this->userMapper = $this->getServiceManager()->get('zfcuser_user_mapper');
+            $this->userMapper = $this->getServiceManager()->get(UserMapper::class);
         }
         return $this->userMapper;
     }
@@ -204,7 +209,7 @@ class User extends EventProvider
     public function getRegisterForm()
     {
         if (null === $this->registerForm) {
-            $this->registerForm = $this->getServiceManager()->get('zfcuser_register_form');
+            $this->registerForm = $this->getServiceManager()->get(Register::class);
         }
         return $this->registerForm;
     }
@@ -225,7 +230,7 @@ class User extends EventProvider
     public function getChangePasswordForm()
     {
         if (null === $this->changePasswordForm) {
-            $this->changePasswordForm = $this->getServiceManager()->get('zfcuser_change_password_form');
+            $this->changePasswordForm = $this->getServiceManager()->get(ChangePassword::class);
         }
         return $this->changePasswordForm;
     }
@@ -248,7 +253,7 @@ class User extends EventProvider
     public function getOptions()
     {
         if (! $this->options instanceof UserServiceOptionsInterface) {
-            $this->setOptions($this->getServiceManager()->get('zfcuser_module_options'));
+            $this->setOptions($this->getServiceManager()->get(ModuleOptions::class));
         }
         return $this->options;
     }
@@ -288,12 +293,12 @@ class User extends EventProvider
     /**
      * Return the Form Hydrator
      *
-     * @return \Laminas\Hydrator\ClassMethods
+     * @return \Laminas\Hydrator\ClassMethodsHydrator
      */
     public function getFormHydrator()
     {
         if (! $this->formHydrator instanceof Hydrator\HydratorInterface) {
-            $this->setFormHydrator($this->getServiceManager()->get('zfcuser_register_form_hydrator'));
+            $this->setFormHydrator($this->getServiceManager()->get(ClassMethodsHydrator::class));
         }
 
         return $this->formHydrator;

@@ -8,6 +8,7 @@ use Laminas\ServiceManager\ServiceManager;
 use Laminas\Crypt\Password\Bcrypt;
 use Laminas\Session\Container as SessionContainer;
 use UserAuthenticator\Mapper\UserInterface as UserMapperInterface;
+use UserAuthenticator\Mapper\User as UserMapper;
 use UserAuthenticator\Model\UserInterface;
 use UserAuthenticator\Options\ModuleOptions;
 
@@ -148,7 +149,7 @@ class Db extends AbstractAdapter
     public function getMapper()
     {
         if (null === $this->mapper) {
-            $this->mapper = $this->getServiceManager()->get('zfcuser_user_mapper');
+            $this->mapper = $this->getServiceManager()->get(UserMapper::class);
         }
 
         return $this->mapper;
@@ -223,7 +224,7 @@ class Db extends AbstractAdapter
     public function getOptions()
     {
         if ($this->options === null) {
-            $this->setOptions($this->getServiceManager()->get('zfcuser_module_options'));
+            $this->setOptions($this->getServiceManager()->get(ModuleOptions::class));
         }
 
         return $this->options;

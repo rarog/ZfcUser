@@ -65,7 +65,7 @@ class AdapterChainFactoryTest extends TestCase
             ->getMock();
 
         $this->serviceLocatorArray = [
-            'zfcuser_module_options' => $this->options,
+            ModuleOptions::class => $this->options,
             'EventManager' => $this->eventManager,
         ];
 

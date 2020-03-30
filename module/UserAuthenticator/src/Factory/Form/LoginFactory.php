@@ -6,6 +6,7 @@ use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use UserAuthenticator\Form\Login;
 use UserAuthenticator\Form\LoginFilter;
+use UserAuthenticator\Options\ModuleOptions;
 
 class LoginFactory implements FactoryInterface
 {
@@ -15,7 +16,7 @@ class LoginFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $serviceManager, $requestedName, array $options = null)
     {
-        $options = $serviceManager->get('zfcuser_module_options');
+        $options = $serviceManager->get(ModuleOptions::class);
         $form = new Login(null, $options);
 
         $form->setInputFilter(new LoginFilter($options));

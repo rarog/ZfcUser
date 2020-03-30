@@ -71,7 +71,7 @@ class AdapterChainFactory implements FactoryInterface
                 );
             }
 
-            $this->setOptions($serviceLocator->get('zfcuser_module_options'));
+            $this->setOptions($serviceLocator->get(ModuleOptions::class));
         }
 
         return $this->options;

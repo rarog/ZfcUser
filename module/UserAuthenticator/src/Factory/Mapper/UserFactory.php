@@ -17,8 +17,8 @@ class UserFactory implements FactoryInterface
     public function __invoke(ContainerInterface $serviceLocator, $requestedName, array $options = null)
     {
         /** @var ModuleOptions $options */
-        $options = $serviceLocator->get('zfcuser_module_options');
-        $dbAdapter = $serviceLocator->get('zfcuser_zend_db_adapter');
+        $options = $serviceLocator->get(ModuleOptions::class);
+        $dbAdapter = $serviceLocator->get('user_authenticator_laminas_db_adapter');
 
         $entityClass = $options->getUserEntityClass();
         $tableName = $options->getTableName();

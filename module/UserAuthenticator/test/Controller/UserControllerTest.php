@@ -22,7 +22,10 @@ use UserAuthenticator\Authentication\Adapter\AdapterChain;
 use UserAuthenticator\Controller\RedirectCallback;
 use UserAuthenticator\Controller\UserController as Controller;
 use UserAuthenticator\Controller\Plugin\UserAuthenticatorAuthentication;
+use UserAuthenticator\Form\ChangeEmail;
+use UserAuthenticator\Form\ChangePassword;
 use UserAuthenticator\Form\Login;
+use UserAuthenticator\Form\Register;
 use UserAuthenticator\Model\User as UserIdentity;
 use UserAuthenticator\Options\ModuleOptions;
 use UserAuthenticator\Service\User as UserService;
@@ -1098,19 +1101,19 @@ class UserControllerTest extends TestCase
 
         return [
             // $method, $useServiceLocator, $servicePrototype, $serviceName, $loginFormCallback
-            ['UserService', true, new UserService(), 'zfcuser_user_service'],
+            ['UserService', true, new UserService(), UserService::class],
             ['UserService', false, new UserService(), null],
-            ['RegisterForm', true, new Form(), 'zfcuser_register_form'],
+            ['RegisterForm', true, new Form(), Register::class],
             ['RegisterForm', false, new Form(), null],
-            ['ChangePasswordForm', true, new Form(), 'zfcuser_change_password_form'],
+            ['ChangePasswordForm', true, new Form(), ChangePassword::class],
             ['ChangePasswordForm', false, new Form(), null],
-            ['ChangeEmailForm', true, new Form(), 'zfcuser_change_email_form'],
+            ['ChangeEmailForm', true, new Form(), ChangeEmail::class],
             ['ChangeEmailForm', false, new Form(), null],
-            ['LoginForm', true, new Form(), 'zfcuser_login_form', $loginFormCallback[0]],
-            ['LoginForm', true, new Form(), 'zfcuser_login_form', $loginFormCallback[1]],
+            ['LoginForm', true, new Form(), Login::class, $loginFormCallback[0]],
+            ['LoginForm', true, new Form(), Login::class, $loginFormCallback[1]],
             ['LoginForm', false, new Form(), null, $loginFormCallback[0]],
             ['LoginForm', false, new Form(), null, $loginFormCallback[1]],
-            ['Options', true, new ModuleOptions(), 'zfcuser_module_options'],
+            ['Options', true, new ModuleOptions(), ModuleOptions::class],
             ['Options', false, new ModuleOptions(), null],
         ];
     }
