@@ -86,16 +86,18 @@ class Register extends Form
             ],
         ]);
 
-        $this->add([
-            'name' => 'submit',
-            'type' => Submit::class,
-            'attributes' => [
-                'value' => 'Register',
+        $this->add(
+            [
+                'name' => 'submit',
+                'type' => Submit::class,
+                'attributes' => [
+                    'value' => 'Register',
+                ],
             ],
-        ],
-        [
-            'priority' => -100,
-        ]);
+            [
+                'priority' => -100,
+            ]
+        );
 
         $this->add([
             'name' => 'csrf',
