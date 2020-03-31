@@ -1,2 +1,12 @@
+# Composer files
+vendor/
 composer.lock
-vendor/*
+
+# Eclipse files
+.buildpath
+.project
+.settings/
+
+# Other
+build/
+.phpunit.result.cache
