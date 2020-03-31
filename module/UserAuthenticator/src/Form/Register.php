@@ -3,10 +3,13 @@
 namespace UserAuthenticator\Form;
 
 use Laminas\Form\Element\Captcha;
-use UserAuthenticator\Options\RegistrationOptionsInterface;
 use Laminas\Form\Element\Csrf;
+use Laminas\Form\Element\Password;
+use Laminas\Form\Element\Submit;
+use Laminas\Form\Element\Text;
+use UserAuthenticator\Options\RegistrationOptionsInterface;
 
-class Register extends Base
+class Register extends ProvidesEventsForm
 {
     /**
      * @var RegistrationOptionsInterface
@@ -22,6 +25,76 @@ class Register extends Base
         $this->setRegistrationOptions($options);
 
         parent::__construct($name);
+
+        if ($this->getRegistrationOptions()->getEnableUsername()) {
+            $this->add([
+                'name' => 'username',
+                'type' => Text::class,
+                'options' => [
+                    'label' => 'Username',
+                ],
+                'attributes' => [
+                    'id' => 'username',
+                ],
+            ]);
+        }
+
+        $this->add([
+            'name' => 'email',
+            'type' => Text::class,
+            'options' => [
+                'label' => 'Email',
+            ],
+            'attributes' => [
+                'id' => 'email',
+            ],
+        ]);
+
+        if ($this->getRegistrationOptions()->getEnableDisplayName()) {
+            $this->add([
+                'name' => 'display_name',
+                'type' => Text::class,
+                'options' => [
+                    'label' => 'Display Name',
+                ],
+                'attributes' => [
+                    'id' => 'display_name',
+                ],
+            ]);
+        }
+
+        $this->add([
+            'name' => 'password',
+            'type' => Password::class,
+            'options' => [
+                'label' => 'Password',
+            ],
+            'attributes' => [
+                'id' => 'password',
+            ],
+        ]);
+
+        $this->add([
+            'name' => 'passwordVerify',
+            'type' => Password::class,
+            'options' => [
+                'label' => 'Password Verify',
+            ],
+            'attributes' => [
+                'id' => 'passwordVerify',
+            ],
+        ]);
+
+        $this->add([
+            'name' => 'submit',
+            'type' => Submit::class,
+            'attributes' => [
+                'value' => 'Register',
+            ],
+        ],
+        [
+            'priority' => -100,
+        ]);
 
         $this->add([
             'name' => 'csrf',
@@ -43,15 +116,6 @@ class Register extends Base
                 ],
             ]);
         }
-
-        $this->remove('userId');
-        if (! $this->getRegistrationOptions()->getEnableUsername()) {
-            $this->remove('username');
-        }
-        if (! $this->getRegistrationOptions()->getEnableDisplayName()) {
-            $this->remove('display_name');
-        }
-        $this->get('submit')->setLabel('Register');
     }
 
     /**
