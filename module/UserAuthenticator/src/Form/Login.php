@@ -2,14 +2,15 @@
 
 namespace UserAuthenticator\Form;
 
+use Laminas\Form\Form;
 use Laminas\Form\Element\Button;
+use Laminas\Form\Element\Captcha;
+use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Password;
 use Laminas\Form\Element\Text;
 use UserAuthenticator\Options\AuthenticationOptionsInterface;
-use Laminas\Form\Element\Csrf;
-use Laminas\Form\Element\Captcha;
 
-class Login extends ProvidesEventsForm
+class Login extends Form
 {
     /**
      * @var AuthenticationOptionsInterface

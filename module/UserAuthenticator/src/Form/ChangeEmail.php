@@ -2,6 +2,7 @@
 
 namespace UserAuthenticator\Form;
 
+use Laminas\Form\Form;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Password;
@@ -9,7 +10,7 @@ use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
 use UserAuthenticator\Options\AuthenticationOptionsInterface;
 
-class ChangeEmail extends ProvidesEventsForm
+class ChangeEmail extends Form
 {
     /**
      * @var AuthenticationOptionsInterface

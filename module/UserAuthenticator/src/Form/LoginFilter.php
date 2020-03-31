@@ -3,12 +3,12 @@
 namespace UserAuthenticator\Form;
 
 use Laminas\Filter\StringTrim;
+use Laminas\InputFilter\InputFilter;
 use Laminas\Validator\EmailAddress;
 use Laminas\Validator\StringLength;
-use UserAuthenticator\InputFilter\ProvidesEventsInputFilter;
 use UserAuthenticator\Options\AuthenticationOptionsInterface;
 
-class LoginFilter extends ProvidesEventsInputFilter
+class LoginFilter extends InputFilter
 {
     public function __construct(AuthenticationOptionsInterface $options)
     {

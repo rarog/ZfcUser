@@ -3,13 +3,13 @@
 namespace UserAuthenticator\Form;
 
 use Laminas\Filter\StringTrim;
+use Laminas\InputFilter\InputFilter;
 use Laminas\Validator\EmailAddress;
 use Laminas\Validator\Identical;
 use Laminas\Validator\StringLength;
-use UserAuthenticator\InputFilter\ProvidesEventsInputFilter;
 use UserAuthenticator\Options\RegistrationOptionsInterface;
 
-class RegisterFilter extends ProvidesEventsInputFilter
+class RegisterFilter extends InputFilter
 {
     protected $emailValidator;
     protected $usernameValidator;
