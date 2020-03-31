@@ -1,7 +1,7 @@
 UserAuthenticator
 =======
 [![Build Status](https://travis-ci.org/rarog/user-authenticator.svg?branch=master)](https://travis-ci.org/rarog/user-authenticator)
-[![Code Coverage](https://scrutinizer-ci.com/g/rarog/user-authenticator/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/rarog/user-authenticator/)
+[![Coverage Status](https://coveralls.io/repos/github/rarog/user-authenticator/badge.svg?branch=master)](https://coveralls.io/github/rarog/user-authenticator?branch=master)
 
 Based on ZfcUser by Evan Coury and the ZF-Commons team
 
