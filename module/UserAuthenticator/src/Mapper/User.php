@@ -2,11 +2,14 @@
 
 namespace UserAuthenticator\Mapper;
 
-use UserAuthenticator\Model\UserInterface as UserModelInterface;
+use Laminas\EventManager\EventManagerAwareTrait;
 use Laminas\Hydrator\HydratorInterface;
+use UserAuthenticator\Model\UserInterface as UserModelInterface;
 
 class User extends AbstractDbMapper implements UserInterface
 {
+    use EventManagerAwareTrait;
+
     protected $tableName  = 'user';
 
     public function findByEmail($email)

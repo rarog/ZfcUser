@@ -13,9 +13,8 @@ use Laminas\Hydrator\ClassMethodsHydrator;
 use Laminas\Hydrator\HydratorInterface;
 use UserAuthenticator\Db\Adapter\MasterSlaveAdapterInterface;
 use UserAuthenticator\Model\UserInterface as UserEntityInterface;
-use UserAuthenticator\EventManager\EventProvider;
 
-abstract class AbstractDbMapper extends EventProvider
+abstract class AbstractDbMapper
 {
     /**
      * @var Adapter

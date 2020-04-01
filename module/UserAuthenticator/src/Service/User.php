@@ -8,7 +8,6 @@ use Laminas\Form\Form;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Crypt\Password\Bcrypt;
 use Laminas\Hydrator;
-use UserAuthenticator\EventManager\EventProvider;
 use UserAuthenticator\Form\ChangePassword;
 use UserAuthenticator\Form\Register;
 use UserAuthenticator\Mapper\UserInterface as UserMapperInterface;
@@ -16,9 +15,11 @@ use UserAuthenticator\Mapper\User as UserMapper;
 use UserAuthenticator\Options\ModuleOptions;
 use UserAuthenticator\Options\UserServiceOptionsInterface;
 use Laminas\Hydrator\ClassMethodsHydrator;
+use Laminas\EventManager\EventManagerAwareTrait;
 
-class User extends EventProvider
+class User
 {
+    use EventManagerAwareTrait;
 
     /**
      * @var UserMapperInterface
