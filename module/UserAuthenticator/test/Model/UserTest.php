@@ -1,6 +1,6 @@
 <?php
 
-namespace UserAuthenticatorTest\MOdule;
+namespace UserAuthenticatorTest\Model;
 
 use PHPUnit\Framework\TestCase;
 use UserAuthenticator\Model\User;
