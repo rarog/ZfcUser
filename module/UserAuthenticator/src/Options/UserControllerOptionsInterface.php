@@ -2,8 +2,6 @@
 
 namespace UserAuthenticator\Options;
 
-use UserAuthenticator\Options\AuthenticationOptionsInterface;
-
 interface UserControllerOptionsInterface
 {
     /**

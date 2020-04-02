@@ -3,7 +3,6 @@
 namespace UserAuthenticator\Authentication\Adapter;
 
 use Laminas\Authentication\Storage\StorageInterface;
-use Laminas\EventManager\EventInterface;
 
 interface ChainableAdapter
 {
