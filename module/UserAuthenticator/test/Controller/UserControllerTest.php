@@ -26,9 +26,9 @@ use UserAuthenticator\Form\ChangeEmail;
 use UserAuthenticator\Form\ChangePassword;
 use UserAuthenticator\Form\Login;
 use UserAuthenticator\Form\Register;
-use UserAuthenticator\Model\User as UserIdentity;
+use UserAuthenticator\Model\User as UserModel;
 use UserAuthenticator\Options\ModuleOptions;
-use UserAuthenticator\Service\User as UserService;
+use UserAuthenticator\Service\UserService;
 use ReflectionProperty;
 use stdClass;
 
@@ -585,12 +585,41 @@ class UserControllerTest extends TestCase
         $this->helperMakePropertyAccessable($controller, 'request', $request);
 
         $userService = $this->getMockBuilder(UserService::class)
+            ->disableOriginalConstructor()
             ->getMock();
         $controller->setUserService($userService);
 
         $form = $this->getMockBuilder(Form::class)
             ->disableOriginalConstructor()
             ->getMock();
+
+        if ($registerSuccess) {
+            $user = new UserModel();
+            $user->setEmail('zfc-user@trash-mail.com');
+            $user->setUsername('zfc-user');
+        }
+
+        if (! ($postRedirectGetReturn instanceof Response) && ($postRedirectGetReturn !== false)) {
+            $this->options->expects($this->any())
+                ->method('getUserEntityClass')
+                ->will($this->returnValue(UserModel::class));
+
+            $form->expects($this->once())
+                ->method('setHydrator');
+            $form->expects($this->once())
+                ->method('bind');
+            $form->expects($this->once())
+                ->method('setData');
+            $form->expects($this->once())
+                ->method('isValid')
+                ->will($this->returnValue($registerSuccess));
+
+            if ($registerSuccess) {
+                $form->expects($this->once())
+                    ->method('getData')
+                    ->will($this->returnValue($user));
+            }
+        }
 
         $controller->setRegisterForm($form);
 
@@ -627,18 +656,10 @@ class UserControllerTest extends TestCase
             ->will($this->returnValue($postRedirectGetReturn));
 
         if ($registerSuccess) {
-            $user = new UserIdentity();
-            $user->setEmail('zfc-user@trash-mail.com');
-            $user->setUsername('zfc-user');
-
             $userService->expects($this->once())
                 ->method('register')
-                ->with($postRedirectGetReturn)
+                ->with($user)
                 ->will($this->returnValue($user));
-
-            $userService->expects($this->any())
-                ->method('getOptions')
-                ->will($this->returnValue($this->options));
 
             $this->options->expects($this->once())
                 ->method('getLoginAfterRegistration')
@@ -780,6 +801,7 @@ class UserControllerTest extends TestCase
 
             if ($isValid) {
                 $userService = $this->getMockBuilder(UserService::class)
+                    ->disableOriginalConstructor()
                     ->getMock();
 
                 $controller->setUserService($userService);
@@ -853,15 +875,17 @@ class UserControllerTest extends TestCase
         $controller = $this->controller;
         $response = new Response();
         $userService = $this->getMockBuilder(UserService::class)
+            ->disableOriginalConstructor()
             ->getMock();
         $authService = $this->getMockBuilder(AuthenticationService::class)
             ->getMock();
-        $identity = new UserIdentity();
+        $identity = new UserModel();
 
         $controller->setUserService($userService);
 
         $this->setUpZfcUserAuthenticationPlugin([
-            'hasIdentity' => true
+            'hasIdentity' => true,
+            'getAuthService' => $authService
         ]);
 
         $form = $this->getMockBuilder(Form::class)
@@ -870,9 +894,9 @@ class UserControllerTest extends TestCase
 
         $controller->setChangeEmailForm($form);
 
-        $userService->expects($this->once())
+        /*$userService->expects($this->once())
             ->method('getAuthService')
-            ->will($this->returnValue($authService));
+            ->will($this->returnValue($authService));*/
 
         $authService->expects($this->once())
             ->method('getIdentity')
@@ -1101,8 +1125,18 @@ class UserControllerTest extends TestCase
 
         return [
             // $method, $useServiceLocator, $servicePrototype, $serviceName, $loginFormCallback
-            ['UserService', true, new UserService(), UserService::class],
-            ['UserService', false, new UserService(), null],
+            [
+                'UserService',
+                true,
+                $this->getMockBuilder(UserService::class)->disableOriginalConstructor()->getMock(),
+                UserService::class
+            ],
+            [
+                'UserService',
+                false,
+                $this->getMockBuilder(UserService::class)->disableOriginalConstructor()->getMock(),
+                null
+            ],
             ['RegisterForm', true, new Form(), Register::class],
             ['RegisterForm', false, new Form(), null],
             ['ChangePasswordForm', true, new Form(), ChangePassword::class],

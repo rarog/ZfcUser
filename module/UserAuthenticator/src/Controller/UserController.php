@@ -14,7 +14,8 @@ use UserAuthenticator\Form\Login;
 use UserAuthenticator\Form\Register;
 use UserAuthenticator\Options\ModuleOptions;
 use UserAuthenticator\Options\UserControllerOptionsInterface;
-use UserAuthenticator\Service\User as UserService;
+use UserAuthenticator\Service\UserService;
+use Laminas\Hydrator\ClassMethodsHydrator;
 
 class UserController extends AbstractActionController
 {
@@ -225,11 +226,14 @@ class UserController extends AbstractActionController
         }
 
         $post = $prg;
-        $user = $service->register($post);
-
         $redirect = isset($prg['redirect']) ? $prg['redirect'] : null;
 
-        if (! $user) {
+        $class = $this->getOptions()->getUserEntityClass();
+        $user = new $class();
+        $form->setHydrator(new ClassMethodsHydrator());
+        $form->bind($user);
+        $form->setData($post);
+        if (! $form->isValid()) {
             return [
                 'registerForm' => $form,
                 'enableRegistration' => $this->getOptions()->getEnableRegistration(),
@@ -237,8 +241,10 @@ class UserController extends AbstractActionController
             ];
         }
 
-        if ($service->getOptions()->getLoginAfterRegistration()) {
-            $identityFields = $service->getOptions()->getAuthIdentityFields();
+        $user = $service->register($form->getData());
+
+        if ($this->getOptions()->getLoginAfterRegistration()) {
+            $identityFields = $this->getOptions()->getAuthIdentityFields();
             if (in_array('email', $identityFields)) {
                 $post['identity'] = $user->getEmail();
             } elseif (in_array('username', $identityFields)) {
@@ -315,7 +321,10 @@ class UserController extends AbstractActionController
 
         $form = $this->getChangeEmailForm();
         $request = $this->getRequest();
-        $request->getPost()->set('identity', $this->getUserService()->getAuthService()->getIdentity()->getEmail());
+        $request->getPost()->set(
+            'identity',
+            $this->zfcUserAuthentication()->getAuthService()->getIdentity()->getEmail()
+        );
 
         $fm = $this->flashMessenger()->setNamespace('change-email')->getMessages();
         if (isset($fm[0])) {

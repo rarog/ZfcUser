@@ -7,11 +7,11 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
 use UserAuthenticator\Controller\RedirectCallback;
 use UserAuthenticator\Controller\UserController;
 use UserAuthenticator\Form\ChangeEmail;
+use UserAuthenticator\Form\ChangePassword;
 use UserAuthenticator\Form\Login;
 use UserAuthenticator\Form\Register;
 use UserAuthenticator\Options\ModuleOptions;
-use UserAuthenticator\Service\User;
-use UserAuthenticator\Form\ChangePassword;
+use UserAuthenticator\Service\UserService;
 
 class UserControllerFactory implements FactoryInterface
 {
@@ -33,7 +33,7 @@ class UserControllerFactory implements FactoryInterface
         $controller->setChangePasswordForm($serviceManager->get(ChangePassword::class));
         $controller->setLoginForm($serviceManager->get(Login::class));
         $controller->setRegisterForm($serviceManager->get(Register::class));
-        $controller->setUserService($serviceManager->get(User::class));
+        $controller->setUserService($serviceManager->get(UserService::class));
 
         return $controller;
     }

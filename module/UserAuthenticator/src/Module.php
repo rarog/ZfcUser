@@ -88,7 +88,7 @@ class Module implements
                 Form\Register::class => Factory\Form\RegisterFactory::class,
                 Mapper\User::class => Factory\Mapper\UserFactory::class,
                 Options\ModuleOptions::class => Factory\Options\ModuleOptionsFactory::class,
-                Service\User::class => Factory\Service\UserFactory::class,
+                Service\UserService::class => Factory\Service\UserServiceFactory::class,
 
                 // We alias this one because it's UserAuthenticator's instance of
                 // Laminas\Authentication\AuthenticationService. We don't want to
