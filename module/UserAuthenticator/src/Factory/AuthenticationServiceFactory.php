@@ -14,11 +14,11 @@ class AuthenticationServiceFactory implements FactoryInterface
      * {@inheritDoc}
      * @see \Laminas\ServiceManager\Factory\FactoryInterface::__invoke()
      */
-    public function __invoke(ContainerInterface $serviceLocator, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         return new AuthenticationService(
-            $serviceLocator->get(Db::class),
-            $serviceLocator->get(AdapterChain::class)
+            $container->get(Db::class),
+            $container->get(AdapterChain::class)
         );
     }
 }

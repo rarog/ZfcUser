@@ -19,21 +19,21 @@ class UserControllerFactory implements FactoryInterface
      * {@inheritDoc}
      * @see \Laminas\ServiceManager\Factory\FactoryInterface::__invoke()
      */
-    public function __invoke(ContainerInterface $serviceManager, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         /* @var RedirectCallback $redirectCallback */
-        $redirectCallback = $serviceManager->get(RedirectCallback::class);
+        $redirectCallback = $container->get(RedirectCallback::class);
 
         /* @var UserController $controller */
         $controller = new UserController($redirectCallback);
-        $controller->setServiceLocator($serviceManager);
+        $controller->setServiceLocator($container);
 
-        $controller->setChangeEmailForm($serviceManager->get(ChangeEmail::class));
-        $controller->setOptions($serviceManager->get(ModuleOptions::class));
-        $controller->setChangePasswordForm($serviceManager->get(ChangePassword::class));
-        $controller->setLoginForm($serviceManager->get(Login::class));
-        $controller->setRegisterForm($serviceManager->get(Register::class));
-        $controller->setUserService($serviceManager->get(UserService::class));
+        $controller->setChangeEmailForm($container->get(ChangeEmail::class));
+        $controller->setOptions($container->get(ModuleOptions::class));
+        $controller->setChangePasswordForm($container->get(ChangePassword::class));
+        $controller->setLoginForm($container->get(Login::class));
+        $controller->setRegisterForm($container->get(Register::class));
+        $controller->setUserService($container->get(UserService::class));
 
         return $controller;
     }

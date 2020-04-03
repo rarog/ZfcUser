@@ -10,6 +10,10 @@ use UserAuthenticator\Form\Login;
 
 class UserAuthenticatorLoginWidgetFactory implements FactoryInterface
 {
+    /**
+     * {@inheritDoc}
+     * @see \Laminas\ServiceManager\Factory\FactoryInterface::__invoke()
+     */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $viewHelper = new UserAuthenticatorLoginWidget();

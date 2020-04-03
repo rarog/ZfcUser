@@ -14,11 +14,11 @@ class UserFactory implements FactoryInterface
      * {@inheritDoc}
      * @see \Laminas\ServiceManager\Factory\FactoryInterface::__invoke()
      */
-    public function __invoke(ContainerInterface $serviceLocator, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         /** @var ModuleOptions $options */
-        $options = $serviceLocator->get(ModuleOptions::class);
-        $dbAdapter = $serviceLocator->get('user_authenticator_laminas_db_adapter');
+        $options = $container->get(ModuleOptions::class);
+        $dbAdapter = $container->get('user_authenticator_laminas_db_adapter');
 
         $entityClass = $options->getUserEntityClass();
         $tableName = $options->getTableName();

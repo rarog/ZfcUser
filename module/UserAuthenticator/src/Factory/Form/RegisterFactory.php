@@ -13,19 +13,19 @@ use UserAuthenticator\Validator\NoRecordExists;
 
 class RegisterFactory implements FactoryInterface
 {
-    public function __invoke(ContainerInterface $serviceManager, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $options = $serviceManager->get(ModuleOptions::class);
+        $options = $container->get(ModuleOptions::class);
         $form = new Register(null, $options);
 
-        $form->setHydrator($serviceManager->get(ClassMethodsHydrator::class));
+        $form->setHydrator($container->get(ClassMethodsHydrator::class));
         $form->setInputFilter(new RegisterFilter(
             new NoRecordExists([
-                'mapper' => $serviceManager->get(User::class),
+                'mapper' => $container->get(User::class),
                 'key'    => 'email'
             ]),
             new NoRecordExists([
-                'mapper' => $serviceManager->get(User::class),
+                'mapper' => $container->get(User::class),
                 'key'    => 'username'
             ]),
             $options

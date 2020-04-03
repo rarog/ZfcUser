@@ -14,9 +14,9 @@ class ChangePasswordFactory implements FactoryInterface
      * {@inheritDoc}
      * @see \Laminas\ServiceManager\Factory\FactoryInterface::__invoke()
      */
-    public function __invoke(ContainerInterface $serviceManager, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $options = $serviceManager->get(ModuleOptions::class);
+        $options = $container->get(ModuleOptions::class);
         $form = new ChangePassword(null, $options);
 
         $form->setInputFilter(new ChangePasswordFilter($options));

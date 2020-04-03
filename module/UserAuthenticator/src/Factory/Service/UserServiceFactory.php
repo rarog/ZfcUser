@@ -14,12 +14,12 @@ class UserServiceFactory implements FactoryInterface
      * {@inheritDoc}
      * @see \Laminas\ServiceManager\Factory\FactoryInterface::__invoke()
      */
-    public function __invoke(ContainerInterface $serviceLocator, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         return new UserService(
-            $serviceLocator->get(UserMapper::class),
-            $serviceLocator->get('zfcuser_auth_service'),
-            $serviceLocator->get(ModuleOptions::class)
+            $container->get(UserMapper::class),
+            $container->get('zfcuser_auth_service'),
+            $container->get(ModuleOptions::class)
         );
     }
 }
