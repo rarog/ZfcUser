@@ -6,10 +6,10 @@ use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use UserAuthenticator\Controller\RedirectCallback;
 use UserAuthenticator\Controller\UserController;
-use UserAuthenticator\Form\ChangeEmail;
-use UserAuthenticator\Form\ChangePassword;
-use UserAuthenticator\Form\Login;
-use UserAuthenticator\Form\Register;
+use UserAuthenticator\Form\ChangeEmail as ChangeEmailForm;
+use UserAuthenticator\Form\ChangePassword as ChangePasswordForm;
+use UserAuthenticator\Form\Login as LoginForm;
+use UserAuthenticator\Form\Register as RegisterForm;
 use UserAuthenticator\Options\ModuleOptions;
 use UserAuthenticator\Service\UserService;
 
@@ -21,19 +21,15 @@ class UserControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /* @var RedirectCallback $redirectCallback */
-        $redirectCallback = $container->get(RedirectCallback::class);
-
-        /* @var UserController $controller */
-        $controller = new UserController($redirectCallback);
-        $controller->setServiceLocator($container);
-
-        $controller->setChangeEmailForm($container->get(ChangeEmail::class));
-        $controller->setOptions($container->get(ModuleOptions::class));
-        $controller->setChangePasswordForm($container->get(ChangePassword::class));
-        $controller->setLoginForm($container->get(Login::class));
-        $controller->setRegisterForm($container->get(Register::class));
-        $controller->setUserService($container->get(UserService::class));
+        $controller = new UserController(
+            $container->get(RedirectCallback::class),
+            $container->get(UserService::class),
+            $container->get(ChangeEmailForm::class),
+            $container->get(ChangePasswordForm::class),
+            $container->get(LoginForm::class),
+            $container->get(RegisterForm::class),
+            $container->get(ModuleOptions::class)
+        );
 
         return $controller;
     }

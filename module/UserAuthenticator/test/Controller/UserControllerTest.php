@@ -4,7 +4,6 @@ namespace UserAuthenticatorTest\Controller;
 
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Authentication\Result;
-use Laminas\Form\Form;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Mvc\Controller\PluginManager;
@@ -14,38 +13,66 @@ use Laminas\Mvc\Controller\Plugin\Redirect;
 use Laminas\Mvc\Controller\Plugin\Url;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\Mvc\Plugin\Prg\PostRedirectGet;
-use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\Stdlib\Parameters;
 use Laminas\View\Model\ViewModel;
 use PHPUnit\Framework\TestCase;
 use UserAuthenticator\Authentication\Adapter\AdapterChain;
 use UserAuthenticator\Controller\RedirectCallback;
-use UserAuthenticator\Controller\UserController as Controller;
+use UserAuthenticator\Controller\UserController;
 use UserAuthenticator\Controller\Plugin\UserAuthenticatorAuthentication;
-use UserAuthenticator\Form\ChangeEmail;
-use UserAuthenticator\Form\ChangePassword;
-use UserAuthenticator\Form\Login;
-use UserAuthenticator\Form\Register;
+use UserAuthenticator\Form\ChangeEmail as ChangeEmailForm;
+use UserAuthenticator\Form\ChangePassword as ChangePasswordForm;
+use UserAuthenticator\Form\Login as LoginForm;
+use UserAuthenticator\Form\Register as RegisterForm;
 use UserAuthenticator\Model\User as UserModel;
 use UserAuthenticator\Options\ModuleOptions;
 use UserAuthenticator\Service\UserService;
 use ReflectionProperty;
 use stdClass;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class UserControllerTest extends TestCase
 {
     /**
-     * @var Controller $controller
+     * @var UserController
      */
-    protected $controller;
+    private $userController;
 
-    protected $pluginManager;
+    /**
+     * @var MockObject
+     */
+    private $userService;
+
+    /**
+     * @var MockObject
+     */
+    private $changeEmailForm;
+
+    /**
+     * @var MockObject
+     */
+    private $changePasswordForm;
+
+    /**
+     * @var MockObject
+     */
+    private $loginForm;
+
+    /**
+     * @var MockObject
+     */
+    private $registerForm;
+
+    /**
+     * @var MockObject
+     */
+    private $moduleOptions;
+
+    private $pluginManager;
 
     public $pluginManagerPlugins = [];
 
     protected $zfcUserAuthenticationPlugin;
-
-    protected $options;
 
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|RedirectCallback
@@ -58,12 +85,46 @@ class UserControllerTest extends TestCase
      */
     protected function setUp(): void
     {
+        /**
+         * @var MockObject
+         */
         $this->redirectCallback = $this->getMockBuilder(RedirectCallback::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $controller = new Controller($this->redirectCallback);
-        $this->controller = $controller;
+        $this->userService = $this->getMockBuilder(UserService::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->changeEmailForm = $this->getMockBuilder(ChangeEmailForm::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->changePasswordForm = $this->getMockBuilder(ChangePasswordForm::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->loginForm = $this->getMockBuilder(LoginForm::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->registerForm = $this->getMockBuilder(RegisterForm::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->moduleOptions = $this->getMockBuilder(ModuleOptions::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->userController  = new UserController(
+            $this->redirectCallback,
+            $this->userService,
+            $this->changeEmailForm,
+            $this->changePasswordForm,
+            $this->loginForm,
+            $this->registerForm,
+            $this->moduleOptions
+        );
 
         $this->zfcUserAuthenticationPlugin = $this->getMockBuilder(UserAuthenticatorAuthentication::class)
             ->getMock();
@@ -78,12 +139,7 @@ class UserControllerTest extends TestCase
 
         $this->pluginManager = $pluginManager;
 
-        $options = $this->getMockBuilder(ModuleOptions::class)
-            ->getMock();
-        $this->options = $options;
-
-        $controller->setPluginManager($pluginManager);
-        $controller->setOptions($options);
+        $this->userController->setPluginManager($pluginManager);
     }
 
     /**
@@ -92,11 +148,16 @@ class UserControllerTest extends TestCase
      */
     protected function tearDown(): void
     {
-        unset($this->options);
         unset($this->pluginManager);
         unset($this->zfcUserAuthenticationPlugin);
-        unset($this->controller);
+        unset($this->moduleOptions);
+        unset($this->registerForm);
+        unset($this->loginForm);
+        unset($this->changePasswordForm);
+        unset($this->changeEmailForm);
+        unset($this->userService);
         unset($this->redirectCallback);
+        unset($this->userController);
     }
 
     public function setUpZfcUserAuthenticationPlugin($option): UserAuthenticatorAuthentication
@@ -140,7 +201,7 @@ class UserControllerTest extends TestCase
      */
     public function testActionControllHasIdentity($methodeName, $hasIdentity, $redirectRoute, $optionGetter): void
     {
-        $controller = $this->controller;
+        $controller = $this->userController;
         $redirectRoute = $redirectRoute ?: $controller::ROUTE_LOGIN;
 
         $this->setUpZfcUserAuthenticationPlugin([
@@ -150,7 +211,7 @@ class UserControllerTest extends TestCase
         $response = new Response();
 
         if ($optionGetter) {
-            $this->options->expects($this->once())
+            $this->moduleOptions->expects($this->once())
                 ->method($optionGetter)
                 ->will($this->returnValue($redirectRoute));
         }
@@ -175,7 +236,7 @@ class UserControllerTest extends TestCase
      */
     public function testIndexActionLoggedIn(): void
     {
-        $controller = $this->controller;
+        $controller = $this->userController;
         $this->setUpZfcUserAuthenticationPlugin([
             'hasIdentity' => true
         ]);
@@ -192,7 +253,7 @@ class UserControllerTest extends TestCase
      */
     public function testLoginActionValidFormRedirectFalse($isValid, $wantRedirect): void
     {
-        $controller = $this->controller;
+        $controller = $this->userController;
         $redirectUrl = 'localhost/redirect1';
 
         $this->setUpZfcUserAuthenticationPlugin([
@@ -224,16 +285,11 @@ class UserControllerTest extends TestCase
 
         $this->helperMakePropertyAccessable($controller, 'request', $request);
 
-        $form = $this->getMockBuilder(Login::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $form->expects($this->any())
+        $this->loginForm->expects($this->any())
             ->method('isValid')
             ->will($this->returnValue((bool) $isValid));
 
-
-        $this->options->expects($this->any())
+        $this->moduleOptions->expects($this->any())
             ->method('getUseRedirectParameterIfPresent')
             ->will($this->returnValue((bool) $wantRedirect));
         if ($wantRedirect) {
@@ -261,7 +317,7 @@ class UserControllerTest extends TestCase
                 'getAuthService' => $service
             ]);
 
-            $form->expects($this->once())
+            $this->loginForm->expects($this->once())
                 ->method('setData')
                 ->with($postArray);
 
@@ -297,7 +353,6 @@ class UserControllerTest extends TestCase
 
             $this->pluginManagerPlugins['redirect'] = $redirect;
 
-
             $response = new Response();
             $url = $this->getMockBuilder(Url::class, ['fromRoute'])
                 ->getMock();
@@ -309,7 +364,6 @@ class UserControllerTest extends TestCase
             $this->pluginManagerPlugins['url'] = $url;
         }
 
-        $controller->setLoginForm($form);
         $result = $controller->loginAction();
 
         if ($isValid) {
@@ -342,13 +396,10 @@ class UserControllerTest extends TestCase
             ->method('isPost')
             ->will($this->returnValue(false));
 
-        $form = $this->getMockBuilder(Login::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $form->expects($this->never())
+        $this->loginForm->expects($this->never())
             ->method('isValid');
 
-        $this->options->expects($this->any())
+        $this->moduleOptions->expects($this->any())
             ->method('getUseRedirectParameterIfPresent')
             ->will($this->returnValue((bool) $redirect));
         if ($redirect) {
@@ -360,17 +411,16 @@ class UserControllerTest extends TestCase
                 ->will($this->returnValue($params));
         }
 
-        $this->helperMakePropertyAccessable($this->controller, 'request', $request);
+        $this->helperMakePropertyAccessable($this->userController, 'request', $request);
 
-        $this->controller->setLoginForm($form);
-        $result = $this->controller->loginAction();
+        $result = $this->userController->loginAction();
 
         $this->assertArrayHasKey('loginForm', $result);
         $this->assertArrayHasKey('redirect', $result);
         $this->assertArrayHasKey('enableRegistration', $result);
 
-        $this->assertInstanceOf(Login::class, $result['loginForm']);
-        $this->assertSame($form, $result['loginForm']);
+        $this->assertInstanceOf(LoginForm::class, $result['loginForm']);
+        $this->assertSame($this->loginForm, $result['loginForm']);
 
         if ($redirect) {
             $this->assertEquals('http://localhost/', $result['redirect']);
@@ -378,7 +428,7 @@ class UserControllerTest extends TestCase
             $this->assertFalse($result['redirect']);
         }
 
-        $this->assertEquals($this->options->getEnableRegistration(), $result['enableRegistration']);
+        $this->assertEquals($this->moduleOptions->getEnableRegistration(), $result['enableRegistration']);
     }
 
 
@@ -388,7 +438,7 @@ class UserControllerTest extends TestCase
      */
     public function testLogoutAction($withRedirect, $post, $query): void
     {
-        $controller = $this->controller;
+        $controller = $this->userController;
 
         $adapter = $this->getMockBuilder(AdapterChain::class)
             ->getMock();
@@ -431,7 +481,7 @@ class UserControllerTest extends TestCase
         $prepareResult = false,
         $authValid = false
     ): void {
-        $controller = $this->controller;
+        $controller = $this->userController;
         $response = new Response();
 
         $params = $this->getMockBuilder(Params::class)
@@ -524,7 +574,7 @@ class UserControllerTest extends TestCase
                     ->method('__invoke');
             }
 
-            $this->options->expects($this->any())
+            $this->moduleOptions->expects($this->any())
                 ->method('getUseRedirectParameterIfPresent')
                 ->will($this->returnValue((bool) $wantRedirect));
         }
@@ -538,13 +588,13 @@ class UserControllerTest extends TestCase
      */
     public function testRegisterActionIsNotAllowed(): void
     {
-        $controller = $this->controller;
+        $controller = $this->userController;
 
         $this->setUpZfcUserAuthenticationPlugin([
             'hasIdentity' => false
         ]);
 
-        $this->options->expects($this->once())
+        $this->moduleOptions->expects($this->once())
             ->method('getEnableRegistration')
             ->will($this->returnValue(false));
 
@@ -567,7 +617,7 @@ class UserControllerTest extends TestCase
         $registerSuccess,
         $loginAfterSuccessWith
     ): void {
-        $controller = $this->controller;
+        $controller = $this->userController;
         $redirectUrl = 'localhost/redirect1';
         $route_url = '/user/register';
         $expectedResult = null;
@@ -576,22 +626,13 @@ class UserControllerTest extends TestCase
             'hasIdentity' => false
         ]);
 
-        $this->options->expects($this->any())
+        $this->moduleOptions->expects($this->any())
             ->method('getEnableRegistration')
             ->will($this->returnValue(true));
 
         $request = $this->getMockBuilder(Request::class)
             ->getMock();
         $this->helperMakePropertyAccessable($controller, 'request', $request);
-
-        $userService = $this->getMockBuilder(UserService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $controller->setUserService($userService);
-
-        $form = $this->getMockBuilder(Form::class)
-            ->disableOriginalConstructor()
-            ->getMock();
 
         if ($registerSuccess) {
             $user = new UserModel();
@@ -600,30 +641,28 @@ class UserControllerTest extends TestCase
         }
 
         if (! ($postRedirectGetReturn instanceof Response) && ($postRedirectGetReturn !== false)) {
-            $this->options->expects($this->any())
+            $this->moduleOptions->expects($this->any())
                 ->method('getUserEntityClass')
                 ->will($this->returnValue(UserModel::class));
 
-            $form->expects($this->once())
+            $this->registerForm->expects($this->once())
                 ->method('setHydrator');
-            $form->expects($this->once())
+            $this->registerForm->expects($this->once())
                 ->method('bind');
-            $form->expects($this->once())
+            $this->registerForm->expects($this->once())
                 ->method('setData');
-            $form->expects($this->once())
+            $this->registerForm->expects($this->once())
                 ->method('isValid')
                 ->will($this->returnValue($registerSuccess));
 
             if ($registerSuccess) {
-                $form->expects($this->once())
+                $this->registerForm->expects($this->once())
                     ->method('getData')
                     ->will($this->returnValue($user));
             }
         }
 
-        $controller->setRegisterForm($form);
-
-        $this->options->expects($this->any())
+        $this->moduleOptions->expects($this->any())
             ->method('getUseRedirectParameterIfPresent')
             ->will($this->returnValue((bool) $wantRedirect));
 
@@ -656,17 +695,17 @@ class UserControllerTest extends TestCase
             ->will($this->returnValue($postRedirectGetReturn));
 
         if ($registerSuccess) {
-            $userService->expects($this->once())
+            $this->userService->expects($this->once())
                 ->method('register')
                 ->with($user)
                 ->will($this->returnValue($user));
 
-            $this->options->expects($this->once())
+            $this->moduleOptions->expects($this->once())
                 ->method('getLoginAfterRegistration')
                 ->will($this->returnValue(! empty($loginAfterSuccessWith)));
 
             if ($loginAfterSuccessWith) {
-                $this->options->expects($this->once())
+                $this->moduleOptions->expects($this->once())
                     ->method('getAuthIdentityFields')
                     ->will($this->returnValue([$loginAfterSuccessWith]));
 
@@ -724,13 +763,13 @@ class UserControllerTest extends TestCase
 
         if ($postRedirectGetReturn === false) {
             $expectedResult = [
-                'registerForm' => $form,
+                'registerForm' => $this->registerForm,
                 'enableRegistration' => true,
                 'redirect' => $wantRedirect ? $redirectUrl : false
             ];
         } elseif ($registerSuccess === false) {
             $expectedResult = [
-                'registerForm' => $form,
+                'registerForm' => $this->registerForm,
                 'enableRegistration' => true,
                 'redirect' => isset($postRedirectGetReturn['redirect']) ? $postRedirectGetReturn['redirect'] : null
             ];
@@ -755,18 +794,12 @@ class UserControllerTest extends TestCase
      */
     public function testChangepasswordAction($status, $postRedirectGetReturn, $isValid, $changeSuccess): void
     {
-        $controller = $this->controller;
+        $controller = $this->userController;
         $response = new Response();
 
         $this->setUpZfcUserAuthenticationPlugin([
             'hasIdentity' => true
         ]);
-
-        $form = $this->getMockBuilder(Form::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $controller->setChangePasswordForm($form);
 
         $flashMessenger = $this->getMockBuilder(FlashMessenger::class)
             ->getMock();
@@ -791,26 +824,20 @@ class UserControllerTest extends TestCase
             ->will($this->returnValue($postRedirectGetReturn));
 
         if ($postRedirectGetReturn !== false && ! ($postRedirectGetReturn instanceof Response)) {
-            $form->expects($this->once())
+            $this->changePasswordForm->expects($this->once())
                 ->method('setData')
                 ->with($postRedirectGetReturn);
 
-            $form->expects($this->once())
+            $this->changePasswordForm->expects($this->once())
                 ->method('isValid')
                 ->will($this->returnValue((bool) $isValid));
 
             if ($isValid) {
-                $userService = $this->getMockBuilder(UserService::class)
-                    ->disableOriginalConstructor()
-                    ->getMock();
-
-                $controller->setUserService($userService);
-
-                $form->expects($this->once())
+                $this->changePasswordForm->expects($this->once())
                     ->method('getData')
                     ->will($this->returnValue($postRedirectGetReturn));
 
-                $userService->expects($this->once())
+                $this->userService->expects($this->once())
                     ->method('changePassword')
                     ->with($postRedirectGetReturn)
                     ->will($this->returnValue((bool) $changeSuccess));
@@ -820,7 +847,6 @@ class UserControllerTest extends TestCase
                     $flashMessenger->expects($this->once())
                         ->method('addMessage')
                         ->with(true);
-
 
                     $redirect = $this->getMockBuilder(Redirect::class)
                         ->getMock();
@@ -845,12 +871,12 @@ class UserControllerTest extends TestCase
             if ($postRedirectGetReturn === false) {
                 $exceptedReturn = [
                     'status' => $status ? 'test' : null,
-                    'changePasswordForm' => $form,
+                    'changePasswordForm' => $this->changePasswordForm,
                 ];
             } elseif ($isValid === false || $changeSuccess === false) {
                 $exceptedReturn = [
                     'status' => false,
-                    'changePasswordForm' => $form,
+                    'changePasswordForm' => $this->changePasswordForm,
                 ];
             }
             if ($exceptedReturn) {
@@ -872,31 +898,18 @@ class UserControllerTest extends TestCase
      */
     public function testChangeEmailAction($status, $postRedirectGetReturn, $isValid, $changeSuccess): void
     {
-        $controller = $this->controller;
+        $controller = $this->userController;
         $response = new Response();
-        $userService = $this->getMockBuilder(UserService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $authService = $this->getMockBuilder(AuthenticationService::class)
             ->getMock();
         $identity = new UserModel();
-
-        $controller->setUserService($userService);
 
         $this->setUpZfcUserAuthenticationPlugin([
             'hasIdentity' => true,
             'getAuthService' => $authService
         ]);
 
-        $form = $this->getMockBuilder(Form::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $controller->setChangeEmailForm($form);
-
-        /*$userService->expects($this->once())
-            ->method('getAuthService')
-            ->will($this->returnValue($authService));*/
+        $controller->setChangeEmailForm($this->changeEmailForm);
 
         $authService->expects($this->once())
             ->method('getIdentity')
@@ -940,16 +953,16 @@ class UserControllerTest extends TestCase
             ->will($this->returnValue($postRedirectGetReturn));
 
         if ($postRedirectGetReturn !== false && ! ($postRedirectGetReturn instanceof Response)) {
-            $form->expects($this->once())
+            $this->changeEmailForm->expects($this->once())
                 ->method('setData')
                 ->with($postRedirectGetReturn);
 
-            $form->expects($this->once())
+            $this->changeEmailForm->expects($this->once())
                 ->method('isValid')
                 ->will($this->returnValue((bool) $isValid));
 
             if ($isValid) {
-                $userService->expects($this->once())
+                $this->userService->expects($this->once())
                     ->method('changeEmail')
                     ->with($postRedirectGetReturn)
                     ->will($this->returnValue((bool) $changeSuccess));
@@ -985,12 +998,12 @@ class UserControllerTest extends TestCase
             if ($postRedirectGetReturn === false) {
                 $exceptedReturn = [
                     'status' => $status ? 'test' : null,
-                    'changeEmailForm' => $form,
+                    'changeEmailForm' => $this->changeEmailForm,
                 ];
             } elseif ($isValid === false || $changeSuccess === false) {
                 $exceptedReturn = [
                     'status' => false,
-                    'changeEmailForm' => $form,
+                    'changeEmailForm' => $this->changeEmailForm,
                 ];
             }
 
@@ -1004,46 +1017,6 @@ class UserControllerTest extends TestCase
                 $this->assertSame($response, $result);
             }
         }
-    }
-
-    /**
-     * @dataProvider providerTestSetterGetterServices
-     * @depend testActionControllHasIdentity
-     */
-    public function testSetterGetterServices(
-        $method,
-        $useServiceLocator,
-        $servicePrototype,
-        $serviceName,
-        $callback = null
-    ): void {
-        $controller = new Controller($this->redirectCallback);
-        $controller->setPluginManager($this->pluginManager);
-
-        if (is_callable($callback)) {
-            call_user_func($callback, $this, $controller);
-        }
-
-        if ($useServiceLocator) {
-            $serviceLocator = $this->getMockBuilder(ServiceLocatorInterface::class)
-                ->getMock();
-            $serviceLocator->expects($this->once())
-                ->method('get')
-                ->with($serviceName)
-                ->will($this->returnValue($servicePrototype));
-            $controller->setServiceLocator($serviceLocator);
-        } else {
-            call_user_func([$controller, 'set' . $method], $servicePrototype);
-        }
-
-        $result = call_user_func([$controller, 'get' . $method]);
-        $this->assertInstanceOf(get_class($servicePrototype), $result);
-        $this->assertSame($servicePrototype, $result);
-
-        // we need two check for every case
-        $result = call_user_func([$controller, 'get' . $method]);
-        $this->assertInstanceOf(get_class($servicePrototype), $result);
-        $this->assertSame($servicePrototype, $result);
     }
 
     public function providerTrueOrFalse(): array
@@ -1099,65 +1072,12 @@ class UserControllerTest extends TestCase
         ];
     }
 
-    public function providerTestSetterGetterServices(): array
-    {
-        $that = $this;
-        $loginFormCallback[] = function () use ($that) {
-            $flashMessenger = $this->getMockBuilder(FlashMessenger::class)
-                ->getMock();
-            $that->pluginManagerPlugins['flashMessenger'] = $flashMessenger;
-
-            $flashMessenger->expects($that->any())
-                ->method('setNamespace')
-                ->with('zfcuser-login-form')
-                ->will($that->returnSelf());
-        };
-        $loginFormCallback[] = function () use ($that) {
-            $flashMessenger = $this->getMockBuilder(FlashMessenger::class)
-                ->getMock();
-            $that->pluginManagerPlugins['flashMessenger'] = $flashMessenger;
-
-            $flashMessenger->expects($that->any())
-                ->method('setNamespace')
-                ->with('zfcuser-login-form')
-                ->will($that->returnSelf());
-        };
-
-        return [
-            // $method, $useServiceLocator, $servicePrototype, $serviceName, $loginFormCallback
-            [
-                'UserService',
-                true,
-                $this->getMockBuilder(UserService::class)->disableOriginalConstructor()->getMock(),
-                UserService::class
-            ],
-            [
-                'UserService',
-                false,
-                $this->getMockBuilder(UserService::class)->disableOriginalConstructor()->getMock(),
-                null
-            ],
-            ['RegisterForm', true, new Form(), Register::class],
-            ['RegisterForm', false, new Form(), null],
-            ['ChangePasswordForm', true, new Form(), ChangePassword::class],
-            ['ChangePasswordForm', false, new Form(), null],
-            ['ChangeEmailForm', true, new Form(), ChangeEmail::class],
-            ['ChangeEmailForm', false, new Form(), null],
-            ['LoginForm', true, new Form(), Login::class, $loginFormCallback[0]],
-            ['LoginForm', true, new Form(), Login::class, $loginFormCallback[1]],
-            ['LoginForm', false, new Form(), null, $loginFormCallback[0]],
-            ['LoginForm', false, new Form(), null, $loginFormCallback[1]],
-            ['Options', true, new ModuleOptions(), ModuleOptions::class],
-            ['Options', false, new ModuleOptions(), null],
-        ];
-    }
-
 
     public function providerTestActionControllHasIdentity(): array
     {
         return [
             // $methodeName , $hasIdentity, $redirectRoute, optionsGetterMethode
-            ['indexAction', false, Controller::ROUTE_LOGIN, null],
+            ['indexAction', false, UserController::ROUTE_LOGIN, null],
             ['loginAction', true, 'user/overview', 'getLoginRedirectRoute'],
             ['authenticateAction', true, 'user/overview', 'getLoginRedirectRoute'],
             ['registerAction', true, 'user/overview', 'getLoginRedirectRoute'],
