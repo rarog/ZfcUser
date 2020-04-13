@@ -5,14 +5,17 @@ namespace UserAuthenticatorTest\Factory\Form;
 use Laminas\Form\FormElementManager;
 use Laminas\Hydrator\ClassMethodsHydrator;
 use Laminas\ServiceManager\ServiceManager;
-use UserAuthenticator\Factory\Form\RegisterFactory;
-use UserAuthenticator\Form\Register;
-use UserAuthenticator\Options\ModuleOptions;
+use UserAuthenticator\Factory\Form\RegisterFormFactory;
+use UserAuthenticator\Form\RegisterForm;
 use UserAuthenticator\Mapper\User as UserMapper;
+use UserAuthenticator\Options\ModuleOptions;
 use PHPUnit\Framework\TestCase;
 
 class RegisterFormFactoryTest extends TestCase
 {
+    /**
+     * @covers UserAuthenticator\Factory\Form\RegisterFormFactory::__invoke
+     */
     public function testFactory()
     {
         $serviceManager = new ServiceManager();
@@ -23,8 +26,11 @@ class RegisterFormFactoryTest extends TestCase
         $formElementManager = new FormElementManager($serviceManager);
         $serviceManager->setService('FormElementManager', $formElementManager);
 
-        $factory = new RegisterFactory();
+        $factory = new RegisterFormFactory();
 
-        $this->assertInstanceOf(Register::class, $factory->__invoke($serviceManager, Register::class));
+        $this->assertInstanceOf(
+            RegisterForm::class,
+            $factory->__invoke($serviceManager, RegisterForm::class)
+        );
     }
 }

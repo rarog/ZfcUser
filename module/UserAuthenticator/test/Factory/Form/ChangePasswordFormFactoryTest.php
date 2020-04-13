@@ -5,13 +5,16 @@ namespace UserAuthenticatorTest\Factory\Form;
 use Laminas\Form\FormElementManager;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
-use UserAuthenticator\Factory\Form\ChangePasswordFactory;
-use UserAuthenticator\Form\ChangePassword;
-use UserAuthenticator\Options\ModuleOptions;
+use UserAuthenticator\Factory\Form\ChangePasswordFormFactory;
+use UserAuthenticator\Form\ChangePasswordForm;
 use UserAuthenticator\Mapper\User as UserMapper;
+use UserAuthenticator\Options\ModuleOptions;
 
 class ChangePasswordFormFactoryTest extends TestCase
 {
+    /**
+     * @covers UserAuthenticator\Factory\Form\ChangePasswordFormFactory::__invoke
+     */
     public function testFactory(): void
     {
         $serviceManager = new ServiceManager();
@@ -21,8 +24,11 @@ class ChangePasswordFormFactoryTest extends TestCase
         $formElementManager = new FormElementManager($serviceManager);
         $serviceManager->setService('FormElementManager', $formElementManager);
 
-        $factory = new ChangePasswordFactory();
+        $factory = new ChangePasswordFormFactory();
 
-        $this->assertInstanceOf(ChangePassword::class, $factory->__invoke($serviceManager, ChangePassword::class));
+        $this->assertInstanceOf(
+            ChangePasswordForm::class,
+            $factory->__invoke($serviceManager, ChangePasswordForm::class)
+        );
     }
 }

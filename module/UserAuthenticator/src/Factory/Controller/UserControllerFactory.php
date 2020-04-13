@@ -6,10 +6,10 @@ use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use UserAuthenticator\Controller\RedirectCallback;
 use UserAuthenticator\Controller\UserController;
-use UserAuthenticator\Form\ChangeEmail as ChangeEmailForm;
-use UserAuthenticator\Form\ChangePassword as ChangePasswordForm;
-use UserAuthenticator\Form\Login as LoginForm;
-use UserAuthenticator\Form\Register as RegisterForm;
+use UserAuthenticator\Form\ChangeEmailForm;
+use UserAuthenticator\Form\ChangePasswordForm;
+use UserAuthenticator\Form\LoginForm;
+use UserAuthenticator\Form\RegisterForm;
 use UserAuthenticator\Options\ModuleOptions;
 use UserAuthenticator\Service\UserService;
 

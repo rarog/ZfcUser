@@ -4,13 +4,13 @@ namespace UserAuthenticator\Factory\Form;
 
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use UserAuthenticator\Form\ChangeEmail;
 use UserAuthenticator\Form\ChangeEmailFilter;
+use UserAuthenticator\Form\ChangeEmailForm;
 use UserAuthenticator\Mapper\User;
 use UserAuthenticator\Options\ModuleOptions;
 use UserAuthenticator\Validator\NoRecordExists;
 
-class ChangeEmailFactory implements FactoryInterface
+class ChangeEmailFormFactory implements FactoryInterface
 {
     /**
      * {@inheritDoc}
@@ -18,11 +18,16 @@ class ChangeEmailFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $options = $container->get(ModuleOptions::class);
-        $form = new ChangeEmail(null, $options);
+        $moduleOptions = $container->get(ModuleOptions::class);
+        $form = new ChangeEmailForm(
+            null,
+            [
+                'module_options' => $moduleOptions,
+            ]
+        );
 
         $form->setInputFilter(new ChangeEmailFilter(
-            $options,
+            $moduleOptions,
             new NoRecordExists([
                 'mapper' => $container->get(User::class),
                 'key'    => 'email'

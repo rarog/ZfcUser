@@ -2,26 +2,21 @@
 
 namespace UserAuthenticator\Form;
 
-use Laminas\Form\Form;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Password;
 use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
-use UserAuthenticator\Options\AuthenticationOptionsInterface;
 
-class ChangeEmail extends Form
+class ChangeEmailForm extends AbstractModuleOptionsForm
 {
     /**
-     * @var AuthenticationOptionsInterface
+     * {@inheritDoc}
+     * @see \UserAuthenticator\Form\AbstractModuleOptionsForm::__construct()
      */
-    protected $authOptions;
-
-    public function __construct($name, AuthenticationOptionsInterface $options)
+    public function __construct($name = null, $options = [])
     {
-        $this->setAuthenticationOptions($options);
-
-        parent::__construct($name);
+        parent::__construct($name, $options);
 
         $this->add([
             'name' => 'identity',
@@ -80,32 +75,9 @@ class ChangeEmail extends Form
             'type' => Csrf::class,
             'options' => [
                 'csrf_options' => [
-                    'timeout' => $this->getAuthenticationOptions()->getLoginFormTimeout(),
+                    'timeout' => $this->moduleOptions->getLoginFormTimeout(),
                 ],
             ],
         ]);
-    }
-
-    /**
-     * Set Authentication-related Options
-     *
-     * @param AuthenticationOptionsInterface $authOptions
-     * @return ChangeEmail
-     */
-    public function setAuthenticationOptions(AuthenticationOptionsInterface $authOptions)
-    {
-        $this->authOptions = $authOptions;
-
-        return $this;
-    }
-
-    /**
-     * Get Authentication-related Options
-     *
-     * @return AuthenticationOptionsInterface
-     */
-    public function getAuthenticationOptions()
-    {
-        return $this->authOptions;
     }
 }

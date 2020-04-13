@@ -4,11 +4,11 @@ namespace UserAuthenticator\Factory\Form;
 
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use UserAuthenticator\Form\Login;
 use UserAuthenticator\Form\LoginFilter;
+use UserAuthenticator\Form\LoginForm;
 use UserAuthenticator\Options\ModuleOptions;
 
-class LoginFactory implements FactoryInterface
+class LoginFormFactory implements FactoryInterface
 {
     /**
      * {@inheritDoc}
@@ -16,10 +16,15 @@ class LoginFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $options = $container->get(ModuleOptions::class);
-        $form = new Login(null, $options);
+        $moduleOptions = $container->get(ModuleOptions::class);
+        $form = new LoginForm(
+            null,
+            [
+                'module_options' => $moduleOptions,
+            ]
+        );
 
-        $form->setInputFilter(new LoginFilter($options));
+        $form->setInputFilter(new LoginFilter($moduleOptions));
 
         return $form;
     }

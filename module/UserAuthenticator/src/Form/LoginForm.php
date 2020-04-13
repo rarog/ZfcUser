@@ -2,26 +2,21 @@
 
 namespace UserAuthenticator\Form;
 
-use Laminas\Form\Form;
 use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Captcha;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Password;
 use Laminas\Form\Element\Text;
-use UserAuthenticator\Options\AuthenticationOptionsInterface;
 
-class Login extends Form
+class LoginForm extends AbstractModuleOptionsForm
 {
     /**
-     * @var AuthenticationOptionsInterface
+     * {@inheritDoc}
+     * @see \UserAuthenticator\Form\AbstractModuleOptionsForm::__construct()
      */
-    protected $authOptions;
-
-    public function __construct($name, AuthenticationOptionsInterface $options)
+    public function __construct($name = null, $options = [])
     {
-        $this->setAuthenticationOptions($options);
-
-        parent::__construct($name);
+        parent::__construct($name, $options);
 
         $this->add([
             'name' => 'identity',
@@ -37,7 +32,7 @@ class Login extends Form
         $emailElement = $this->get('identity');
         $label = $emailElement->getLabel('label');
         // @TODO: make translation-friendly
-        foreach ($this->getAuthenticationOptions()->getAuthIdentityFields() as $mode) {
+        foreach ($this->moduleOptions->getAuthIdentityFields() as $mode) {
             $label = (! empty($label) ? $label . ' or ' : '') . ucfirst($mode);
         }
         $emailElement->setLabel($label);
@@ -58,18 +53,18 @@ class Login extends Form
             'type' => Csrf::class,
             'options' => [
                 'csrf_options' => [
-                    'timeout' => $this->getAuthenticationOptions()->getLoginFormTimeout(),
+                    'timeout' => $this->moduleOptions->getLoginFormTimeout(),
                 ],
             ],
         ]);
 
-        if ($this->getAuthenticationOptions()->getUseLoginFormCaptcha()) {
+        if ($this->moduleOptions->getUseLoginFormCaptcha()) {
             $this->add([
                 'name' => 'captcha',
                 'type' => Captcha::class,
                 'options' => [
                     'label' => 'Please type the following text',
-                    'captcha' => $this->getAuthenticationOptions()->getFormCaptchaOptions(),
+                    'captcha' => $this->moduleOptions->getFormCaptchaOptions(),
                 ],
             ]);
         }
@@ -84,28 +79,5 @@ class Login extends Form
         $this->add($submitElement, [
             'priority' => -100,
         ]);
-    }
-
-    /**
-     * Set Authentication-related Options
-     *
-     * @param AuthenticationOptionsInterface $authOptions
-     * @return Login
-     */
-    public function setAuthenticationOptions(AuthenticationOptionsInterface $authOptions)
-    {
-        $this->authOptions = $authOptions;
-
-        return $this;
-    }
-
-    /**
-     * Get Authentication-related Options
-     *
-     * @return AuthenticationOptionsInterface
-     */
-    public function getAuthenticationOptions()
-    {
-        return $this->authOptions;
     }
 }

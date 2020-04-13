@@ -2,32 +2,23 @@
 
 namespace UserAuthenticator\Form;
 
-use Laminas\Form\Form;
 use Laminas\Form\Element\Captcha;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Password;
 use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
-use UserAuthenticator\Options\RegistrationOptionsInterface;
 
-class Register extends Form
+class RegisterForm extends AbstractModuleOptionsForm
 {
     /**
-     * @var RegistrationOptionsInterface
+     * {@inheritDoc}
+     * @see \UserAuthenticator\Form\AbstractModuleOptionsForm::__construct()
      */
-    protected $registrationOptions;
-
-    /**
-     * @param string|null $name
-     * @param RegistrationOptionsInterface $options
-     */
-    public function __construct($name, RegistrationOptionsInterface $options)
+    public function __construct($name = null, $options = [])
     {
-        $this->setRegistrationOptions($options);
+        parent::__construct($name, $options);
 
-        parent::__construct($name);
-
-        if ($this->getRegistrationOptions()->getEnableUsername()) {
+        if ($this->moduleOptions->getEnableUsername()) {
             $this->add([
                 'name' => 'username',
                 'type' => Text::class,
@@ -51,7 +42,7 @@ class Register extends Form
             ],
         ]);
 
-        if ($this->getRegistrationOptions()->getEnableDisplayName()) {
+        if ($this->moduleOptions->getEnableDisplayName()) {
             $this->add([
                 'name' => 'display_name',
                 'type' => Text::class,
@@ -91,7 +82,7 @@ class Register extends Form
                 'name' => 'submit',
                 'type' => Submit::class,
                 'attributes' => [
-                    'value' => 'Register',
+                    'value' => 'RegisterForm',
                 ],
             ],
             [
@@ -104,42 +95,20 @@ class Register extends Form
             'type' => Csrf::class,
             'options' => [
                 'csrf_options' => [
-                    'timeout' => $this->getRegistrationOptions()->getUserFormTimeout(),
+                    'timeout' => $this->moduleOptions->getUserFormTimeout(),
                 ],
             ],
         ]);
 
-        if ($this->getRegistrationOptions()->getUseRegistrationFormCaptcha()) {
+        if ($this->moduleOptions->getUseRegistrationFormCaptcha()) {
             $this->add([
                 'name' => 'captcha',
                 'type' => Captcha::class,
                 'options' => [
                     'label' => 'Please type the following text',
-                    'captcha' => $this->getRegistrationOptions()->getFormCaptchaOptions(),
+                    'captcha' => $this->moduleOptions->getFormCaptchaOptions(),
                 ],
             ]);
         }
-    }
-
-    /**
-     * Set Registration Options
-     *
-     * @param RegistrationOptionsInterface $registrationOptions
-     * @return Register
-     */
-    public function setRegistrationOptions(RegistrationOptionsInterface $registrationOptions)
-    {
-        $this->registrationOptions = $registrationOptions;
-        return $this;
-    }
-
-    /**
-     * Get Registration Options
-     *
-     * @return RegistrationOptionsInterface
-     */
-    public function getRegistrationOptions()
-    {
-        return $this->registrationOptions;
     }
 }

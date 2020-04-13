@@ -5,18 +5,23 @@ namespace UserAuthenticator\Factory\Form;
 use Interop\Container\ContainerInterface;
 use Laminas\Hydrator\ClassMethodsHydrator;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use UserAuthenticator\Form\Register;
 use UserAuthenticator\Form\RegisterFilter;
+use UserAuthenticator\Form\RegisterForm;
 use UserAuthenticator\Mapper\User;
 use UserAuthenticator\Options\ModuleOptions;
 use UserAuthenticator\Validator\NoRecordExists;
 
-class RegisterFactory implements FactoryInterface
+class RegisterFormFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $options = $container->get(ModuleOptions::class);
-        $form = new Register(null, $options);
+        $moduleOptions = $container->get(ModuleOptions::class);
+        $form = new RegisterForm(
+            null,
+            [
+                'module_options' => $moduleOptions,
+            ]
+        );
 
         $form->setHydrator($container->get(ClassMethodsHydrator::class));
         $form->setInputFilter(new RegisterFilter(
@@ -28,7 +33,7 @@ class RegisterFactory implements FactoryInterface
                 'mapper' => $container->get(User::class),
                 'key'    => 'username'
             ]),
-            $options
+            $moduleOptions
         ));
 
         return $form;

@@ -4,36 +4,41 @@ namespace UserAuthenticatorTest\Form;
 
 use Laminas\Captcha\AbstractAdapter;
 use PHPUnit\Framework\TestCase;
-use UserAuthenticator\Form\Login as Form;
-use UserAuthenticator\Options\AuthenticationOptionsInterface;
+use UserAuthenticator\Form\LoginForm;
+use UserAuthenticator\Options\ModuleOptions;
 
-class LoginTest extends TestCase
+class LoginFormTest extends TestCase
 {
     /**
-     * @covers UserAuthenticator\Form\Login::__construct
+     * @covers UserAuthenticator\Form\LoginForm::__construct
      * @dataProvider providerTestConstruct
      */
     public function testConstruct(array $authIdentityFields, bool $useCaptcha): void
     {
-        $options = $this->getMockBuilder(AuthenticationOptionsInterface::class)
+        $moduleOptions = $this->getMockBuilder(ModuleOptions::class)
             ->getMock();
-        $options->expects($this->once())
+        $moduleOptions->expects($this->once())
             ->method('getAuthIdentityFields')
             ->will($this->returnValue($authIdentityFields));
-        $options->expects($this->any())
+        $moduleOptions->expects($this->any())
             ->method('getUseLoginFormCaptcha')
             ->will($this->returnValue($useCaptcha));
         if ($useCaptcha && class_exists(AbstractAdapter::class)) {
             $captcha = $this->getMockForAbstractClass(AbstractAdapter::class);
 
-            $options->expects($this->once())
+            $moduleOptions->expects($this->once())
                 ->method('getFormCaptchaOptions')
                 ->will($this->returnValue($captcha));
         }
 
-        $form = new Form(null, $options);
+        $loginForm = new LoginForm(
+            null,
+            [
+                'module_options' => $moduleOptions,
+            ]
+        );
 
-        $elements = $form->getElements();
+        $elements = $loginForm->getElements();
 
         $this->assertArrayHasKey('identity', $elements);
         $this->assertArrayHasKey('credential', $elements);
@@ -58,21 +63,8 @@ class LoginTest extends TestCase
     }
 
     /**
-     * @covers UserAuthenticator\Form\Login::getAuthenticationOptions
-     * @covers UserAuthenticator\Form\Login::setAuthenticationOptions
+     * @return array
      */
-    public function testSetGetAuthenticationOptions(): void
-    {
-        $options = $this->getMockBuilder(AuthenticationOptionsInterface::class)
-            ->getMock();
-        $options->expects($this->once())
-            ->method('getAuthIdentityFields')
-            ->will($this->returnValue([]));
-        $form = new Form(null, $options);
-
-        $this->assertSame($options, $form->getAuthenticationOptions());
-    }
-
     public function providerTestConstruct(): array
     {
         return [

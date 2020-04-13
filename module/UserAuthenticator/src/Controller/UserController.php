@@ -7,10 +7,10 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Stdlib\Parameters;
 use Laminas\Stdlib\ResponseInterface as Response;
 use Laminas\View\Model\ViewModel;
-use UserAuthenticator\Form\ChangeEmail as ChangeEmailForm;
-use UserAuthenticator\Form\ChangePassword as ChangePasswordForm;
-use UserAuthenticator\Form\Login as LoginForm;
-use UserAuthenticator\Form\Register as RegisterForm;
+use UserAuthenticator\Form\ChangeEmailForm;
+use UserAuthenticator\Form\ChangePasswordForm;
+use UserAuthenticator\Form\LoginForm;
+use UserAuthenticator\Form\RegisterForm;
 use UserAuthenticator\Options\ModuleOptions;
 use UserAuthenticator\Service\UserService;
 
